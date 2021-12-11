@@ -84,7 +84,7 @@ plugins:
 
 # Collections
 collections:
-  recipes:
+  demo:
     output: true
     permalink: /:collection/:path/
 
@@ -100,8 +100,8 @@ defaults:
       share: true
   # Recipe defaults
   - scope:
-      path: "_recipes"
-      type: recipes
+      path: "_demo"
+      type: demo
     values:
       layout: post
       comments: true
