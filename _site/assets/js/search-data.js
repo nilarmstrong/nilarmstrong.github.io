@@ -170,7 +170,7 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/analyzing-crash-files/"
       },{
         "title": "6. Code Auditing",
-        "excerpt":"","categories": ["Uncategorized"],
+        "excerpt":"Code auditing is literally analyzing codes to find software vulnerabilities. Lua is a open-source language, so we can audit code by inspecting C codes that consist Lua. While analyzing crash files, we often had hard time understanding some logics. Those kinds of crash were generated during garbage collection process. In...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/code-auditing/"
       },{
