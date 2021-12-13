@@ -155,12 +155,12 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/what-is-lua/"
       },{
         "title": "3. Previous Vulnerabilites",
-        "excerpt":"We started our security research on Lua by analyzing1-day vulnerabilites. Case studying previous vulnerabilites may be helpful to excavate new vulnerabilites. Specifically, we reviewed sandbox escape vulnerability in Lua v5.2, and previous CVEs related Lua. 1. Sandbox escape 2. CVEs related to Lua ","categories": ["Uncategorized"],
+        "excerpt":"We started our security research on Lua by analyzing1-day vulnerabilites. Case studying previous vulnerabilites may be helpful to excavate new vulnerabilites. Specifically, we reviewed sandbox escape vulnerability in Lua v5.2, and previous CVEs related Lua. 1. Sandbox escape lua-5.4.4-sandbox-escape 2. CVEs related to Lua ","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/previous-vulnerabilites/"
       },{
         "title": "4. Fuzzing Lua Interpreter",
-        "excerpt":"","categories": ["Uncategorized"],
+        "excerpt":"Nowadays, as application programs have lots of feature, it is not easy to find vulnerabilities by simply analyzing codes or binaries. Fuzzing can be an efficient way of finding software vulnerabilities. However, there was no fuzzer that targeted Lua. We needed to implement our own Lua fuzzer. Thorugh trial and...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/fuzzing-lua-interpreter/"
       },{
