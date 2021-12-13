@@ -150,7 +150,7 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/introduction/"
       },{
         "title": "2. What is Lua?",
-        "excerpt":"","categories": ["Uncategorized"],
+        "excerpt":"So, what is Lua? Lua is a lightweight, embeddable scripting language. For detailed information, we recommend you to refer official website of Lua and “Programming in Lua”. Although some of you might not heard about Lua, it is actually embedded on many famous host programs to support scripting. In this...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/what-is-lua/"
       },{

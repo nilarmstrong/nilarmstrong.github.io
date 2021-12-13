@@ -1,4 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-12-13T00:57:51+09:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">Defeating Lua</title><subtitle>Tips for finding vulnerabilites in Lua Programming Language</subtitle><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><entry><title type="html">10. Achievements</title><link href="http://localhost:4000/uncategorized/achievements/" rel="alternate" type="text/html" title="10. Achievements" /><published>2021-12-10T00:00:00+09:00</published><updated>2021-12-10T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/achievements</id><content type="html" xml:base="http://localhost:4000/uncategorized/achievements/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">9. How to Report</title><link href="http://localhost:4000/uncategorized/how-to-report/" rel="alternate" type="text/html" title="9. How to Report" /><published>2021-12-09T00:00:00+09:00</published><updated>2021-12-09T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/how-to-report</id><content type="html" xml:base="http://localhost:4000/uncategorized/how-to-report/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">8. Applying to Host Programs</title><link href="http://localhost:4000/uncategorized/applying-to-host-programs/" rel="alternate" type="text/html" title="8. Applying to Host Programs" /><published>2021-12-08T00:00:00+09:00</published><updated>2021-12-08T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/applying-to-host-programs</id><content type="html" xml:base="http://localhost:4000/uncategorized/applying-to-host-programs/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">7. Vulnerability Analysis</title><link href="http://localhost:4000/uncategorized/vulnerability-analysis/" rel="alternate" type="text/html" title="7. Vulnerability Analysis" /><published>2021-12-07T00:00:00+09:00</published><updated>2021-12-07T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/vulnerability-analysis</id><content type="html" xml:base="http://localhost:4000/uncategorized/vulnerability-analysis/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">6. Code Auditing</title><link href="http://localhost:4000/uncategorized/code-auditing/" rel="alternate" type="text/html" title="6. Code Auditing" /><published>2021-12-06T00:00:00+09:00</published><updated>2021-12-06T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/code-auditing</id><content type="html" xml:base="http://localhost:4000/uncategorized/code-auditing/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">5. Analyzing Crash Files</title><link href="http://localhost:4000/uncategorized/analyzing-crash-files/" rel="alternate" type="text/html" title="5. Analyzing Crash Files" /><published>2021-12-05T00:00:00+09:00</published><updated>2021-12-05T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/analyzing-crash-files</id><content type="html" xml:base="http://localhost:4000/uncategorized/analyzing-crash-files/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">4. Fuzzing Lua Interpreter</title><link href="http://localhost:4000/uncategorized/fuzzing-lua-interpreter/" rel="alternate" type="text/html" title="4. Fuzzing Lua Interpreter" /><published>2021-12-04T00:00:00+09:00</published><updated>2021-12-04T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/fuzzing-lua-interpreter</id><content type="html" xml:base="http://localhost:4000/uncategorized/fuzzing-lua-interpreter/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">3. Previous Vulnerabilites</title><link href="http://localhost:4000/uncategorized/previous-vulnerabilites/" rel="alternate" type="text/html" title="3. Previous Vulnerabilites" /><published>2021-12-03T00:00:00+09:00</published><updated>2021-12-03T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/previous-vulnerabilites</id><content type="html" xml:base="http://localhost:4000/uncategorized/previous-vulnerabilites/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">2. What is Lua?</title><link href="http://localhost:4000/uncategorized/what-is-lua/" rel="alternate" type="text/html" title="2. What is Lua?" /><published>2021-12-02T00:00:00+09:00</published><updated>2021-12-02T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/what-is-lua</id><content type="html" xml:base="http://localhost:4000/uncategorized/what-is-lua/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">1. Introduction</title><link href="http://localhost:4000/uncategorized/introduction/" rel="alternate" type="text/html" title="1. Introduction" /><published>2021-12-01T00:00:00+09:00</published><updated>2021-12-01T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/introduction</id><content type="html" xml:base="http://localhost:4000/uncategorized/introduction/">&lt;p&gt;Hi, we are students from Korea, and are interested in cybersecurity. We belong to BoB(Best of the Best) which is a government supported 8-month program  that trains passionate students to become cybersecurity experts. You can find more information about BoB from the link below.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/atom.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-12-13T16:24:38+09:00</updated><id>http://localhost:4000/atom.xml</id><title type="html">Defeating Lua</title><subtitle>Tips for finding vulnerabilites in Lua Programming Language</subtitle><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><entry><title type="html">10. Achievements</title><link href="http://localhost:4000/uncategorized/achievements/" rel="alternate" type="text/html" title="10. Achievements" /><published>2021-12-10T00:00:00+09:00</published><updated>2021-12-10T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/achievements</id><content type="html" xml:base="http://localhost:4000/uncategorized/achievements/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">9. How to Report</title><link href="http://localhost:4000/uncategorized/how-to-report/" rel="alternate" type="text/html" title="9. How to Report" /><published>2021-12-09T00:00:00+09:00</published><updated>2021-12-09T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/how-to-report</id><content type="html" xml:base="http://localhost:4000/uncategorized/how-to-report/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">8. Applying to Host Programs</title><link href="http://localhost:4000/uncategorized/applying-to-host-programs/" rel="alternate" type="text/html" title="8. Applying to Host Programs" /><published>2021-12-08T00:00:00+09:00</published><updated>2021-12-08T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/applying-to-host-programs</id><content type="html" xml:base="http://localhost:4000/uncategorized/applying-to-host-programs/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">7. Vulnerability Analysis</title><link href="http://localhost:4000/uncategorized/vulnerability-analysis/" rel="alternate" type="text/html" title="7. Vulnerability Analysis" /><published>2021-12-07T00:00:00+09:00</published><updated>2021-12-07T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/vulnerability-analysis</id><content type="html" xml:base="http://localhost:4000/uncategorized/vulnerability-analysis/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">6. Code Auditing</title><link href="http://localhost:4000/uncategorized/code-auditing/" rel="alternate" type="text/html" title="6. Code Auditing" /><published>2021-12-06T00:00:00+09:00</published><updated>2021-12-06T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/code-auditing</id><content type="html" xml:base="http://localhost:4000/uncategorized/code-auditing/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">5. Analyzing Crash Files</title><link href="http://localhost:4000/uncategorized/analyzing-crash-files/" rel="alternate" type="text/html" title="5. Analyzing Crash Files" /><published>2021-12-05T00:00:00+09:00</published><updated>2021-12-05T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/analyzing-crash-files</id><content type="html" xml:base="http://localhost:4000/uncategorized/analyzing-crash-files/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">4. Fuzzing Lua Interpreter</title><link href="http://localhost:4000/uncategorized/fuzzing-lua-interpreter/" rel="alternate" type="text/html" title="4. Fuzzing Lua Interpreter" /><published>2021-12-04T00:00:00+09:00</published><updated>2021-12-04T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/fuzzing-lua-interpreter</id><content type="html" xml:base="http://localhost:4000/uncategorized/fuzzing-lua-interpreter/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">3. Previous Vulnerabilites</title><link href="http://localhost:4000/uncategorized/previous-vulnerabilites/" rel="alternate" type="text/html" title="3. Previous Vulnerabilites" /><published>2021-12-03T00:00:00+09:00</published><updated>2021-12-03T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/previous-vulnerabilites</id><content type="html" xml:base="http://localhost:4000/uncategorized/previous-vulnerabilites/"></content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html"></summary></entry><entry><title type="html">2. What is Lua?</title><link href="http://localhost:4000/uncategorized/what-is-lua/" rel="alternate" type="text/html" title="2. What is Lua?" /><published>2021-12-02T00:00:00+09:00</published><updated>2021-12-02T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/what-is-lua</id><content type="html" xml:base="http://localhost:4000/uncategorized/what-is-lua/">&lt;p&gt;So, what is Lua? Lua is a lightweight, embeddable scripting language. For detailed information, we recommend you to refer &lt;a href=&quot;https://www.lua.org/about.html&quot;&gt;official website&lt;/a&gt; of Lua and “Programming in Lua”. Although some of you might not heard about Lua, it is actually embedded on many famous host programs to support scripting. In this post, we will explain major attributes of Lua and give real examples of host programs that use Lua.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;1-attributes&quot;&gt;1. Attributes&lt;/h1&gt;
+&lt;h2 id=&quot;1-open-source&quot;&gt;1) Open-source&lt;/h2&gt;
+
+&lt;p&gt;Lua is an open-source language. It is implemented with C language. You can download its source code from both &lt;a href=&quot;https://www.lua.org/download.html&quot;&gt;official website&lt;/a&gt; and &lt;a href=&quot;https://github.com/lua/lua&quot;&gt;github&lt;/a&gt; of Lua. Thanks to its open-source attribute, we could make our analysis much more easily. People who are interested in Lua freely make discussions in &lt;a href=&quot;http://lua-users.org/lists/lua-l/&quot;&gt;lua-l&lt;/a&gt; for improvement and revision.
+&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;2-lightweight&quot;&gt;2) Lightweight&lt;/h2&gt;
+
+&lt;p&gt;Once you download the source code of Lua, you can figure out that the number of codes that consist Lua is quite small. Official website of Lua says that several benchmarks show Lua is one of the fastest language in the realm of interpreted scripting Language.
+&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;3-interpreted-language&quot;&gt;3) Interpreted Language&lt;/h2&gt;
+
+&lt;p&gt;Lua can be considered as Interpreted language, as it supports JIT(just-in-time) compiler. Unlike compiled language generates executable file such as .exe in Windows, interpreted language decode and execute source code line by line. C language is an example of compiled language, and python language a counterpart of interpreted one.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Process of executing compiled language&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/1.png&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Process of executing interpreted language&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/2.png&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Lua interpreter receives files with .lua extension as input, compile with its JIT compiler, making scripts into internally interpretable form.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Executing test.lua file&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/3.jpg&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/4.jpg&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+You can also test Lua codes by just executing the interpreter.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Executing Lua interpreter&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/5.jpg&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;4-embeddable&quot;&gt;4) Embeddable&lt;/h2&gt;
+
+&lt;p&gt;Lua supports simple and well documented C API. Actually, Lua is solely used alone. Instead, it occupies small portions of applications in embedded form. Let me give a toy example on how C API is used to interact with Lua.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/6.png&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;variable “L” of lua_State * type is used to communicate with Lua. luaL_newstate() function is used to create state information, and lua_close() function is used to delete the information(Similar to allocating / deallocating memory). luaL_dofile() function executes “example.lua” script. In order to share data between C and Lua, virtual stack is used.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/7.png&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Figure above shows indexes when five data is pushed on virtual stack. Top of the stack can be accessed with index 5 and -1.&lt;/p&gt;
+
+&lt;p&gt;So, now suppose that there is a function that multiplies two parameters and returns the result in “example.lua” script.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/8.png&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;main function in C source file is written as below.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/9.png&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In line 18, function “multiply” is pushed on virtual stack by calling lua_getglobal function. Two arguments(5 and 7) are pushed on virtual stack in line 20 ~ 21. lua_pcall function is called to execute “multiply” function, and return value is retrieved through calling lua_tonumber function(). You can see that variable “ans” has expected value through printing out its content, which is 35(5 times 7).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/10.png&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;2-examples&quot;&gt;2. Examples&lt;/h1&gt;
+
+&lt;p&gt;There are various host programs that use Lua. In this part, we give famous example programs that use Lua for scripting. Some host programs modify original Lua and use their own API system.&lt;/p&gt;
+
+&lt;h2 id=&quot;1-software-tools&quot;&gt;1) Software tools&lt;/h2&gt;
+
+&lt;h3 id=&quot;1-wireshark&quot;&gt;(1) Wireshark&lt;/h3&gt;
+
+&lt;p&gt;Wireshark is one of the most famous network protocol analyzer. It uses Lua to write dissectors, taps, and capture file readers and writers.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/11.jpg&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You can refer to &lt;a href=&quot;https://gitlab.com/wireshark/wireshark/-/wikis/Lua&quot;&gt;gitlab&lt;/a&gt; of wireshark for further information.&lt;/p&gt;
+
+&lt;h3 id=&quot;2-cheat-engine&quot;&gt;(2) Cheat Engine&lt;/h3&gt;
+
+&lt;p&gt;Cheat Engine is a development environment focused on modding games and applications for personal use.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/images/what-is-lua/12.jpg&quot; alt=&quot;image-center&quot; class=&quot;align-center&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You can refer to Lua documentation of cheat engine from Help-&amp;gt;Lua documentation menu for further information.&lt;/p&gt;
+
+&lt;h2 id=&quot;2-games&quot;&gt;2) Games&lt;/h2&gt;
+
+&lt;h3 id=&quot;1-world-of-warcraft&quot;&gt;(1) World of Warcraft&lt;/h3&gt;
+
+&lt;p&gt;World of Warcraft is MMORPG game developed by Blizzard. World of Warcraft(a.k.a WoW) supports WoW AddOn system to customize UI. You can refer to &lt;a href=&quot;https://wowwiki-archive.fandom.com/wiki/Lua_file&quot;&gt;wowwiki&lt;/a&gt; website to figure out how Lua script is used.&lt;/p&gt;
+
+&lt;h3 id=&quot;2-roblox&quot;&gt;(2) Roblox&lt;/h3&gt;
+
+&lt;p&gt;Roblox is an online game platform that users can create games and enjoy them. Roblox uses modified Lua internally. You can learn how to use Lua in Roblox from &lt;a href=&quot;https://developer.roblox.com/en-us/learn-roblox/coding-scripts&quot;&gt;developer.roblox.com&lt;/a&gt;.&lt;/p&gt;</content><author><name>Team nilarmstrong&lt;br&gt;(BoB 10th)</name></author><category term="Uncategorized" /><category term="Lua" /><summary type="html">So, what is Lua? Lua is a lightweight, embeddable scripting language. For detailed information, we recommend you to refer official website of Lua and “Programming in Lua”. Although some of you might not heard about Lua, it is actually embedded on many famous host programs to support scripting. In this post, we will explain major attributes of Lua and give real examples of host programs that use Lua.</summary></entry><entry><title type="html">1. Introduction</title><link href="http://localhost:4000/uncategorized/introduction/" rel="alternate" type="text/html" title="1. Introduction" /><published>2021-12-01T00:00:00+09:00</published><updated>2021-12-01T00:00:00+09:00</updated><id>http://localhost:4000/uncategorized/introduction</id><content type="html" xml:base="http://localhost:4000/uncategorized/introduction/">&lt;p&gt;Hi, we are students from Korea, and are interested in cybersecurity. We belong to BoB(Best of the Best) which is a government supported 8-month program  that trains passionate students to become cybersecurity experts. You can find more information about BoB from the link below.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://www.kitribob.kr/&quot;&gt;KITRI BoB&lt;/a&gt;&lt;/p&gt;
 

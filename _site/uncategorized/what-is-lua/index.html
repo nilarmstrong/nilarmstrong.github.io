@@ -21,8 +21,8 @@
 <meta property="og:title" content="What is Lua?" />
 <meta name="author" content="Team nilarmstrong<br>(BoB 10th)" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Tips for finding vulnerabilites in Lua Programming Language" />
-<meta property="og:description" content="Tips for finding vulnerabilites in Lua Programming Language" />
+<meta name="description" content="So, what is Lua? Lua is a lightweight, embeddable scripting language. For detailed information, we recommend you to refer official website of Lua and “Programming in Lua”. Although some of you might not heard about Lua, it is actually embedded on many famous host programs to support scripting. In this post, we will explain major attributes of Lua and give real examples of host programs that use Lua." />
+<meta property="og:description" content="So, what is Lua? Lua is a lightweight, embeddable scripting language. For detailed information, we recommend you to refer official website of Lua and “Programming in Lua”. Although some of you might not heard about Lua, it is actually embedded on many famous host programs to support scripting. In this post, we will explain major attributes of Lua and give real examples of host programs that use Lua." />
 <link rel="canonical" href="http://localhost:4000/uncategorized/what-is-lua/" />
 <meta property="og:url" content="http://localhost:4000/uncategorized/what-is-lua/" />
 <meta property="og:site_name" content="Defeating Lua" />
@@ -32,7 +32,7 @@
 <meta property="twitter:title" content="What is Lua?" />
 <meta name="google-site-verification" content="UQj93ERU9zgECodaaXgVpkjrFn9UrDMEzVamacSoQ8Y" />
 <script type="application/ld+json">
-{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/images/so-simple-site-logo.png"},"name":"Team nilarmstrong<br>(BoB 10th)"},"headline":"What is Lua?","dateModified":"2021-12-02T00:00:00+09:00","datePublished":"2021-12-02T00:00:00+09:00","@type":"BlogPosting","author":{"@type":"Person","name":"Team nilarmstrong<br>(BoB 10th)"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/uncategorized/what-is-lua/"},"description":"Tips for finding vulnerabilites in Lua Programming Language","url":"http://localhost:4000/uncategorized/what-is-lua/","@context":"https://schema.org"}</script>
+{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/images/so-simple-site-logo.png"},"name":"Team nilarmstrong<br>(BoB 10th)"},"headline":"What is Lua?","dateModified":"2021-12-02T00:00:00+09:00","datePublished":"2021-12-02T00:00:00+09:00","@type":"BlogPosting","author":{"@type":"Person","name":"Team nilarmstrong<br>(BoB 10th)"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/uncategorized/what-is-lua/"},"description":"So, what is Lua? Lua is a lightweight, embeddable scripting language. For detailed information, we recommend you to refer official website of Lua and “Programming in Lua”. Although some of you might not heard about Lua, it is actually embedded on many famous host programs to support scripting. In this post, we will explain major attributes of Lua and give real examples of host programs that use Lua.","url":"http://localhost:4000/uncategorized/what-is-lua/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -118,7 +118,7 @@
             <a class="u-url" rel="me" href="https://github.com/Lua-Project"><i class="fab fa-github-square fa-lg" title="GitHub"></i></a>
           </li></ul>
 
-<span class="read-time">~1 min read</span>
+<span class="read-time">3 min read</span>
 
     <time class="page-date dt-published" datetime="2021-12-02T00:00:00+09:00"><a class="u-url" href="">December 2, 2021</a>
 </time>
@@ -142,7 +142,111 @@
 
       <div class="page-content">
         <div class="e-content">
-          
+          <p>So, what is Lua? Lua is a lightweight, embeddable scripting language. For detailed information, we recommend you to refer <a href="https://www.lua.org/about.html">official website</a> of Lua and “Programming in Lua”. Although some of you might not heard about Lua, it is actually embedded on many famous host programs to support scripting. In this post, we will explain major attributes of Lua and give real examples of host programs that use Lua.</p>
+
+<p><br /></p>
+<h1 id="1-attributes">1. Attributes</h1>
+<h2 id="1-open-source">1) Open-source</h2>
+
+<p>Lua is an open-source language. It is implemented with C language. You can download its source code from both <a href="https://www.lua.org/download.html">official website</a> and <a href="https://github.com/lua/lua">github</a> of Lua. Thanks to its open-source attribute, we could make our analysis much more easily. People who are interested in Lua freely make discussions in <a href="http://lua-users.org/lists/lua-l/">lua-l</a> for improvement and revision.
+<br /></p>
+<h2 id="2-lightweight">2) Lightweight</h2>
+
+<p>Once you download the source code of Lua, you can figure out that the number of codes that consist Lua is quite small. Official website of Lua says that several benchmarks show Lua is one of the fastest language in the realm of interpreted scripting Language.
+<br /></p>
+<h2 id="3-interpreted-language">3) Interpreted Language</h2>
+
+<p>Lua can be considered as Interpreted language, as it supports JIT(just-in-time) compiler. Unlike compiled language generates executable file such as .exe in Windows, interpreted language decode and execute source code line by line. C language is an example of compiled language, and python language a counterpart of interpreted one.</p>
+
+<ul>
+  <li>Process of executing compiled language</li>
+</ul>
+
+<p><img src="http://localhost:4000/images/what-is-lua/1.png" alt="image-center" class="align-center" /></p>
+
+<p><br /></p>
+<ul>
+  <li>Process of executing interpreted language</li>
+</ul>
+
+<p><img src="http://localhost:4000/images/what-is-lua/2.png" alt="image-center" class="align-center" /></p>
+
+<p>Lua interpreter receives files with .lua extension as input, compile with its JIT compiler, making scripts into internally interpretable form.</p>
+
+<ul>
+  <li>Executing test.lua file</li>
+</ul>
+
+<p><img src="http://localhost:4000/images/what-is-lua/3.jpg" alt="image-center" class="align-center" /></p>
+
+<p><img src="http://localhost:4000/images/what-is-lua/4.jpg" alt="image-center" class="align-center" /></p>
+
+<p><br />
+You can also test Lua codes by just executing the interpreter.</p>
+
+<ul>
+  <li>Executing Lua interpreter</li>
+</ul>
+
+<p><img src="http://localhost:4000/images/what-is-lua/5.jpg" alt="image-center" class="align-center" /></p>
+
+<p><br /></p>
+<h2 id="4-embeddable">4) Embeddable</h2>
+
+<p>Lua supports simple and well documented C API. Actually, Lua is solely used alone. Instead, it occupies small portions of applications in embedded form. Let me give a toy example on how C API is used to interact with Lua.</p>
+
+<p><img src="http://localhost:4000/images/what-is-lua/6.png" alt="image-center" class="align-center" /></p>
+
+<p>variable “L” of lua_State * type is used to communicate with Lua. luaL_newstate() function is used to create state information, and lua_close() function is used to delete the information(Similar to allocating / deallocating memory). luaL_dofile() function executes “example.lua” script. In order to share data between C and Lua, virtual stack is used.</p>
+
+<p><img src="http://localhost:4000/images/what-is-lua/7.png" alt="image-center" class="align-center" /></p>
+
+<p>Figure above shows indexes when five data is pushed on virtual stack. Top of the stack can be accessed with index 5 and -1.</p>
+
+<p>So, now suppose that there is a function that multiplies two parameters and returns the result in “example.lua” script.</p>
+
+<p><img src="http://localhost:4000/images/what-is-lua/8.png" alt="image-center" class="align-center" /></p>
+
+<p>main function in C source file is written as below.</p>
+
+<p><img src="http://localhost:4000/images/what-is-lua/9.png" alt="image-center" class="align-center" /></p>
+
+<p>In line 18, function “multiply” is pushed on virtual stack by calling lua_getglobal function. Two arguments(5 and 7) are pushed on virtual stack in line 20 ~ 21. lua_pcall function is called to execute “multiply” function, and return value is retrieved through calling lua_tonumber function(). You can see that variable “ans” has expected value through printing out its content, which is 35(5 times 7).</p>
+
+<p><img src="http://localhost:4000/images/what-is-lua/10.png" alt="image-center" class="align-center" /></p>
+
+<p><br /></p>
+<h1 id="2-examples">2. Examples</h1>
+
+<p>There are various host programs that use Lua. In this part, we give famous example programs that use Lua for scripting. Some host programs modify original Lua and use their own API system.</p>
+
+<h2 id="1-software-tools">1) Software tools</h2>
+
+<h3 id="1-wireshark">(1) Wireshark</h3>
+
+<p>Wireshark is one of the most famous network protocol analyzer. It uses Lua to write dissectors, taps, and capture file readers and writers.</p>
+
+<p><img src="http://localhost:4000/images/what-is-lua/11.jpg" alt="image-center" class="align-center" /></p>
+
+<p>You can refer to <a href="https://gitlab.com/wireshark/wireshark/-/wikis/Lua">gitlab</a> of wireshark for further information.</p>
+
+<h3 id="2-cheat-engine">(2) Cheat Engine</h3>
+
+<p>Cheat Engine is a development environment focused on modding games and applications for personal use.</p>
+
+<p><img src="http://localhost:4000/images/what-is-lua/12.jpg" alt="image-center" class="align-center" /></p>
+
+<p>You can refer to Lua documentation of cheat engine from Help-&gt;Lua documentation menu for further information.</p>
+
+<h2 id="2-games">2) Games</h2>
+
+<h3 id="1-world-of-warcraft">(1) World of Warcraft</h3>
+
+<p>World of Warcraft is MMORPG game developed by Blizzard. World of Warcraft(a.k.a WoW) supports WoW AddOn system to customize UI. You can refer to <a href="https://wowwiki-archive.fandom.com/wiki/Lua_file">wowwiki</a> website to figure out how Lua script is used.</p>
+
+<h3 id="2-roblox">(2) Roblox</h3>
+
+<p>Roblox is an online game platform that users can create games and enjoy them. Roblox uses modified Lua internally. You can learn how to use Lua in Roblox from <a href="https://developer.roblox.com/en-us/learn-roblox/coding-scripts">developer.roblox.com</a>.</p>
 
         </div>
 
