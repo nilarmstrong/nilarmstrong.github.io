@@ -165,7 +165,7 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/fuzzing-lua-interpreter/"
       },{
         "title": "5. Analyzing Crash Files",
-        "excerpt":"","categories": ["Uncategorized"],
+        "excerpt":"From the implemented fuzzer, thousands of crash files were generated. Since we are just a small team and we had limited time for this project, we needed some strategy to classify our crash files. Also, as crash files were .lua script files, we spent much time on analyzing root cause...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/analyzing-crash-files/"
       },{

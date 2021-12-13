@@ -21,8 +21,8 @@
 <meta property="og:title" content="Analyzing Crash Files" />
 <meta name="author" content="Team nilarmstrong<br>(BoB 10th)" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Tips for finding vulnerabilites in Lua Programming Language" />
-<meta property="og:description" content="Tips for finding vulnerabilites in Lua Programming Language" />
+<meta name="description" content="From the implemented fuzzer, thousands of crash files were generated. Since we are just a small team and we had limited time for this project, we needed some strategy to classify our crash files. Also, as crash files were .lua script files, we spent much time on analyzing root cause of crash files. We believe this post would be helpful to those who are trying to analyze lua script that causes crash on Lua interprerter." />
+<meta property="og:description" content="From the implemented fuzzer, thousands of crash files were generated. Since we are just a small team and we had limited time for this project, we needed some strategy to classify our crash files. Also, as crash files were .lua script files, we spent much time on analyzing root cause of crash files. We believe this post would be helpful to those who are trying to analyze lua script that causes crash on Lua interprerter." />
 <link rel="canonical" href="http://localhost:4000/uncategorized/analyzing-crash-files/" />
 <meta property="og:url" content="http://localhost:4000/uncategorized/analyzing-crash-files/" />
 <meta property="og:site_name" content="Defeating Lua" />
@@ -32,7 +32,7 @@
 <meta property="twitter:title" content="Analyzing Crash Files" />
 <meta name="google-site-verification" content="UQj93ERU9zgECodaaXgVpkjrFn9UrDMEzVamacSoQ8Y" />
 <script type="application/ld+json">
-{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/images/so-simple-site-logo.png"},"name":"Team nilarmstrong<br>(BoB 10th)"},"headline":"Analyzing Crash Files","dateModified":"2021-12-05T00:00:00+09:00","datePublished":"2021-12-05T00:00:00+09:00","@type":"BlogPosting","author":{"@type":"Person","name":"Team nilarmstrong<br>(BoB 10th)"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/uncategorized/analyzing-crash-files/"},"description":"Tips for finding vulnerabilites in Lua Programming Language","url":"http://localhost:4000/uncategorized/analyzing-crash-files/","@context":"https://schema.org"}</script>
+{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/images/so-simple-site-logo.png"},"name":"Team nilarmstrong<br>(BoB 10th)"},"headline":"Analyzing Crash Files","dateModified":"2021-12-05T00:00:00+09:00","datePublished":"2021-12-05T00:00:00+09:00","@type":"BlogPosting","author":{"@type":"Person","name":"Team nilarmstrong<br>(BoB 10th)"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/uncategorized/analyzing-crash-files/"},"description":"From the implemented fuzzer, thousands of crash files were generated. Since we are just a small team and we had limited time for this project, we needed some strategy to classify our crash files. Also, as crash files were .lua script files, we spent much time on analyzing root cause of crash files. We believe this post would be helpful to those who are trying to analyze lua script that causes crash on Lua interprerter.","url":"http://localhost:4000/uncategorized/analyzing-crash-files/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -142,7 +142,12 @@
 
       <div class="page-content">
         <div class="e-content">
-          
+          <p>From the implemented fuzzer, thousands of crash files were generated. Since we are just a small team and we had limited time for this project, we needed some strategy to classify our crash files. Also, as crash files were .lua script files, we spent much time on analyzing root cause of crash files. We believe this post would be helpful to those who are trying to analyze lua script that causes crash on Lua interprerter.</p>
+
+<h1 id="1-classifyng-crash-files">1. Classifyng crash files</h1>
+
+<h1 id="2-tips-for-analyzing-the-crash">2. Tips for analyzing the crash</h1>
+
 
         </div>
 
