@@ -40,16 +40,16 @@ Lua interpreter receives files with .lua extension as input, compile with its JI
 
 - Executing test.lua file
 
-![image-center]({{ '/images/what-is-lua/3.jpg' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/what-is-lua/3.JPG' | absolute_url }}){: .align-center}
 
-![image-center]({{ '/images/what-is-lua/4.jpg' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/what-is-lua/4.JPG' | absolute_url }}){: .align-center}
 
 <br>
 You can also test Lua codes by just executing the interpreter.
 
 - Executing Lua interpreter
 
-![image-center]({{ '/images/what-is-lua/5.jpg' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/what-is-lua/5.JPG' | absolute_url }}){: .align-center}
 
 <br>
 ## 4) Embeddable
@@ -105,7 +105,7 @@ Wireshark is one of the most famous network protocol analyzer. It uses Lua to wr
 
 
 
-![image-center]({{ '/images/what-is-lua/11.jpg' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/what-is-lua/11.JPG' | absolute_url }}){: .align-center}
 
 
 
@@ -119,7 +119,7 @@ Cheat Engine is a development environment focused on modding games and applicati
 
 
 
-![image-center]({{ '/images/what-is-lua/12.jpg' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/what-is-lua/12.JPG' | absolute_url }}){: .align-center}
 
 
 
