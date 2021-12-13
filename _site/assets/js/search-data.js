@@ -155,7 +155,7 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/what-is-lua/"
       },{
         "title": "3. Previous Vulnerabilites",
-        "excerpt":"","categories": ["Uncategorized"],
+        "excerpt":"We started our security research on Lua by analyzing1-day vulnerabilites. Case studying previous vulnerabilites may be helpful to excavate new vulnerabilites. Specifically, we reviewed sandbox escape vulnerability in Lua v5.2, and previous CVEs related Lua. 1. Sandbox escape 2. CVEs related to Lua ","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/previous-vulnerabilites/"
       },{
