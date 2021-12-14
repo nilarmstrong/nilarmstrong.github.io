@@ -383,10 +383,8 @@ The follwing is an analysis of the existing version of the sandbox escaping expl
 ## Exploit flow schematic
 
 ![image-center]({{ '/images/previous-vulnerabilities/exploit_flow1.jpeg' | absolute_url }}){: .align-center}
-<br></br>
 
 ![image-center]({{ '/images/previous-vulnerabilities/exploit_flow2.jpeg' | absolute_url }}){: .align-center}
-<br></br>
 
 ![image-center]({{ '/images/previous-vulnerabilities/exploit_flow3.jpeg' | absolute_url }}){: .align-center}
 
@@ -394,19 +392,12 @@ The follwing is an analysis of the existing version of the sandbox escaping expl
 ## Reference
 
 - [lua-5.2.4-sandbox-escape](https://github.com/erezto/lua-sandbox-escape)
-
 - [lua-5.4.4-sandbox-escape](https://github.com/Lua-Project/lua-5.4.4-sandbox-escape)
-
 - [lua-bytecode](https://www.luac.nl/)
-
 - [lua-5.3-Bytecode-Reference](https://the-ravi-programming-language.readthedocs.io/en/latest/lua_bytecode_reference.html#)
-
 - [Programming-in-Lua](https://www.lua.org/pil/contents.html)
-
 - [github-lua](https://github.com/lua/lua)
-
 - [string.gsub](http://www.lua.org/manual/5.4/manual.html#pdf-string.gsub)
-
 - [string.dump](http://www.lua.org/manual/5.4/manual.html#pdf-string.dump)
 
 
