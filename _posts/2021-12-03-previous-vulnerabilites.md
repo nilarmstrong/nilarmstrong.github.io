@@ -401,8 +401,18 @@ The follwing is an analysis of the existing version of the sandbox escaping expl
 - [string.dump](http://www.lua.org/manual/5.4/manual.html#pdf-string.dump)
 
 
-
-
-
+<br>
 # 2. CVEs related to Lua
 
+There are 10 CVEs related to Lua. You can find them from [this link](https://www.cvedetails.com/vulnerability-list/vendor_id-13641/LUA.html). The most recent one(CVE-2021-43519) is what we had got with our project. We analyzed all of the CVEs(except the recent one) to understand the internal structure of Lua. If you look in detail, you can figure out that most CVEs seem to be far from a critical issue. We made analysis documents for each CVEs.
+
+
+- CVE-2020-24371
+- CVE-2020-24370
+- CVE-2020-24369
+- CVE-2020-24342
+- CVE-2020-15945
+- CVE-2020-15889
+- CVE-2020-15888
+- CVE-2019-6706
+- CVE-2014-5461
