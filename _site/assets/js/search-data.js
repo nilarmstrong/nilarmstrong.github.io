@@ -185,7 +185,7 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/applying-to-host-programs/"
       },{
         "title": "9. How to Report",
-        "excerpt":"","categories": ["Uncategorized"],
+        "excerpt":"If you find a new vulnerability from Lua, you can report it, but how? This post would be helpful to those who are trying to report Lua vulnerabilities. Lua-l Although there is Lua github, it hasn’t opened pull request. You can use Lua-l instead. Lua-l is an active and friendly...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/how-to-report/"
       },{
