@@ -118,7 +118,7 @@
             <a class="u-url" rel="me" href="https://github.com/Lua-Project"><i class="fab fa-github-square fa-lg" title="GitHub"></i></a>
           </li></ul>
 
-<span class="read-time">~1 min read</span>
+<span class="read-time">1 min read</span>
 
     <time class="page-date dt-published" datetime="2021-12-05T00:00:00+09:00"><a class="u-url" href="">December 5, 2021</a>
 </time>
@@ -145,8 +145,58 @@
           <p>From the implemented fuzzer, thousands of crash files were generated. Since we are just a small team and we had limited time for this project, we needed some strategy to classify our crash files. Also, as crash files were .lua script files, we spent much time on analyzing root cause of crash files. We believe this post would be helpful to those who are trying to analyze lua script that causes crash on Lua interprerter.</p>
 
 <h1 id="1-classifyng-crash-files">1. Classifyng crash files</h1>
+<h2 id="1-comparing-hash-value-of-call-stacks--pc">1) Comparing hash value of call stack’s  PC</h2>
+
+<p>Under the same environment, we made an assumption that if hash values of call stack’s PC(from call stack #0 to call stack #4) of two crash files are same, they are overlapped.  We made script files to automate comparing process. You can refer the script files from <a href="https://github.com/JIHOI-KIM/MyLuaScript/tree/master/v2">this link</a>. Using this method the number of crash files was reduced from thousands to hundreds.</p>
+
+<h2 id="2-checking-crash-type">2) Checking crash type</h2>
+
+<p>Hundreds of crash files are still a long way to go. There were various kinds of crash files. Crash files caused use-after-free, heap overflow, stack overflow, segmentation violation, etc. Not all crash files are related to worthwhile vulnerability. Our mentor recommended us to give precedence to crash type. We first analyzed use-after-free, segmentation violation, then heap overflow, and so on. Recently, we could find an exploitable vulnerability from use-after-free crash file. It would be helpful to first analyze suspicious crash files before trivial ones.</p>
 
 <h1 id="2-tips-for-analyzing-the-crash">2. Tips for analyzing the crash</h1>
+
+<h2 id="makefile">makefile</h2>
+
+<ul>
+  <li>
+    <p>AddressSanitizer
+If you want to use AddressSanitizer, you need to add <code class="language-plaintext highlighter-rouge">-fsanitize=address</code> option to the makefile.</p>
+  </li>
+  <li>
+    <p>GDB debugging with source code
+If you want to debug with source code, you need to add <code class="language-plaintext highlighter-rouge">-g -O0</code> options to the makefile.</p>
+  </li>
+</ul>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c"># skipped
+</span>  <span class="c"># enable Linux goodies
+</span>  <span class="nv">MYCFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-std</span><span class="o">=</span>c99 <span class="nt">-DLUA_USE_LINUX</span> <span class="nt">-DLUA_USE_READLINE</span>
+  <span class="nv">MYLDFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-Wl</span>,-E
+  <span class="nv">MYLIBS</span><span class="o">=</span> <span class="nt">-ldl</span> <span class="nt">-lreadline</span>
+
+
+  <span class="nv">CC</span><span class="o">=</span> gcc
+  <span class="nv">CFLAGS</span><span class="o">=</span> <span class="nt">-Wall</span> <span class="nt">-O2</span> <span class="nv">$(MYCFLAGS)</span> <span class="nt">-fno-stack-protector</span> <span class="nt">-fno-common</span> <span class="nt">-march</span><span class="o">=</span>native
+  <span class="nv">AR</span><span class="o">=</span> ar rc
+  <span class="nv">RANLIB</span><span class="o">=</span> ranlib
+  <span class="nv">RM</span><span class="o">=</span> <span class="nb">rm</span> <span class="nt">-f</span>
+  <span class="c"># skipped
+</span></code></pre></div></div>
+
+<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c"># skipped
+</span>  <span class="c"># enable Linux goodies
+</span>  <span class="nv">MYCFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-g</span> <span class="nt">-O0</span> <span class="nt">-std</span><span class="o">=</span>c99 <span class="nt">-DLUA_USE_LINUX</span> <span class="nt">-DLUA_USE_READLINE</span> <span class="nt">-fsanitize</span><span class="o">=</span>address <span class="c">#-DLUAI_ASSERT -DLUA_USE_APICHECK</span>
+  <span class="nv">MYLDFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-Wl</span>,-E
+  <span class="nv">MYLIBS</span><span class="o">=</span> <span class="nt">-ldl</span> <span class="nt">-lreadline</span> <span class="nt">-fsanitize</span><span class="o">=</span>address
+
+
+  <span class="nv">CC</span><span class="o">=</span> gcc
+  <span class="nv">CFLAGS</span><span class="o">=</span> <span class="nt">-Wall</span> <span class="nv">$(MYCFLAGS)</span> <span class="nt">-fno-stack-protector</span> <span class="nt">-fno-common</span> <span class="nt">-march</span><span class="o">=</span>native
+  <span class="nv">AR</span><span class="o">=</span> ar rc
+  <span class="nv">RANLIB</span><span class="o">=</span> ranlib
+  <span class="nv">RM</span><span class="o">=</span> <span class="nb">rm</span> <span class="nt">-f</span>
+  <span class="c"># skipped
+</span></code></pre></div></div>
 
 
         </div>

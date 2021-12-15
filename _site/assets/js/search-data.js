@@ -175,7 +175,7 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/code-auditing/"
       },{
         "title": "7. Vulnerability Analysis",
-        "excerpt":"Lua 5.4.4 Sandbox Escaping &amp; Type confusion caused by the absence of type check http://lua-users.org/lists/lua-l/2021-10/msg00104.html Crash: Recursive coroutine with pcall leads to stackoverflow of interpreter http://lua-users.org/lists/lua-l/2021-10/msg00123.html Error handling with To-be-closed variable declared inside coroutine causes use-after-free read/write http://lua-users.org/lists/lua-l/2021-10/msg00131.html Crash : SEGV that occurs during error handling that occurs in the...","categories": ["Uncategorized"],
+        "excerpt":"With tools and knowledge prepared, we had excavated several vulnerabilities in Lua. In this post, you can figure out discussions we had made in Lua-l. As Lua is open-source language, you can see lots of people giving their opinions about our analysis. Lua 5.4.4 Sandbox Escaping &amp; Type confusion caused...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/vulnerability-analysis/"
       },{
