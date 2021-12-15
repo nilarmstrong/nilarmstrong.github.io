@@ -175,7 +175,7 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/code-auditing/"
       },{
         "title": "7. Vulnerability Analysis",
-        "excerpt":"","categories": ["Uncategorized"],
+        "excerpt":"Lua 5.4.4 Sandbox Escaping &amp; Type confusion caused by the absence of type check http://lua-users.org/lists/lua-l/2021-10/msg00104.html Crash: Recursive coroutine with pcall leads to stackoverflow of interpreter http://lua-users.org/lists/lua-l/2021-10/msg00123.html Error handling with To-be-closed variable declared inside coroutine causes use-after-free read/write http://lua-users.org/lists/lua-l/2021-10/msg00131.html Crash : SEGV that occurs during error handling that occurs in the...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/vulnerability-analysis/"
       },{

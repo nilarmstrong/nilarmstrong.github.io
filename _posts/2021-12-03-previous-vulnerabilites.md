@@ -407,12 +407,12 @@ The follwing is an analysis of the existing version of the sandbox escaping expl
 There are 10 CVEs related to Lua. You can find them from [this link](https://www.cvedetails.com/vulnerability-list/vendor_id-13641/LUA.html). The most recent one(CVE-2021-43519) is what we had got with our project. We analyzed all of the CVEs(except the recent one) to understand the internal structure of Lua. If you look in detail, you can figure out that most CVEs seem to be far from a critical issue. We made analysis documents for each CVEs.
 
 
-- CVE-2020-24371
-- CVE-2020-24370
-- CVE-2020-24369
-- CVE-2020-24342
-- CVE-2020-15945
-- CVE-2020-15889
-- CVE-2020-15888
-- CVE-2019-6706
-- CVE-2014-5461
+- [CVE-2020-24371](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2020-24371.pdf)
+- [CVE-2020-24370](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2020-24370.pdf)
+- [CVE-2020-24369](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2020-24369.pdf)
+- [CVE-2020-24342](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2020-24342.pdf)
+- [CVE-2020-15945](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2020-15945.pdf)
+- [CVE-2020-15889](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2020-15889.pdf)
+- [CVE-2020-15888](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2020-15888.pdf)
+- [CVE-2019-6706](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2019-6706.pdf)
+- [CVE-2014-5461](https://github.com/Lua-Project/cve-analysis/blob/main/CVE-2014-5461.pdf)
