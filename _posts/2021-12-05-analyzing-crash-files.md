@@ -17,7 +17,7 @@ Under the same environment, we made an assumption that if hash values of call st
 
 ## 2) Checking crash type
 
-Hundreds of crash files are still a long way to go. There were various kinds of crash files. Crash files caused use-after-free, heap overflow, stack overflow, segmentation violation, etc. Not all crash files are related to worthwhile vulnerability. Our mentor recommended us to give precedence to crash type. We first analyzed use-after-free, segmentation violation, then heap overflow, and so on. Recently, we could find an exploitable vulnerability from use-after-free crash file. It would be helpful to first analyze suspicious crash files before trivial ones.
+Hundreds of crash files are still a long way to go. There were various kinds of crash files. Crash files caused use-after-free, heap overflow, stack overflow, segmentation violation, etc. Not qqqqqqqqqqall crash files are related to worthwhile vulnerability. Our mentor recommended us to give precedence to crash type. We first analyzed use-after-free, segmentation violation, then heap overflow, and so on. Recently, we could find an exploitable vulnerability from use-after-free crash file. It would be helpful to first analyze suspicious crash files before trivial ones.
 
 
 
@@ -34,37 +34,39 @@ Hundreds of crash files are still a long way to go. There were various kinds of 
     If you want to debug with source code, you need to add `-g -O0` options to the makefile.
 
   - `A makefile with nothing applied`
-  ```make
-  # skipped
-  # enable Linux goodies
-  MYCFLAGS= $(LOCAL) -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE
-  MYLDFLAGS= $(LOCAL) -Wl,-E
-  MYLIBS= -ldl -lreadline
+
+    ```make
+    # skipped
+    # enable Linux goodies
+    MYCFLAGS= $(LOCAL) -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE
+    MYLDFLAGS= $(LOCAL) -Wl,-E
+    MYLIBS= -ldl -lreadline
 
 
-  CC= gcc
-  CFLAGS= -Wall -O2 $(MYCFLAGS) -fno-stack-protector -fno-common -march=native
-  AR= ar rc
-  RANLIB= ranlib
-  RM= rm -f
-  # skipped
-  ```
+    CC= gcc
+    CFLAGS= -Wall -O2 $(MYCFLAGS) -fno-stack-protector -fno-common -march=native
+    AR= ar rc
+    RANLIB= ranlib
+    RM= rm -f
+    # skipped
+    ```
 
   - `ASAN, debug wth source code applied makefile`
-  ```make
-  # skipped
-  # enable Linux goodies
-  MYCFLAGS= $(LOCAL) -g -O0 -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE -fsanitize=address #-DLUAI_ASSERT -DLUA_USE_APICHECK
-  MYLDFLAGS= $(LOCAL) -Wl,-E
-  MYLIBS= -ldl -lreadline -fsanitize=address
+  
+    ```make
+    # skipped
+    # enable Linux goodies
+    MYCFLAGS= $(LOCAL) -g -O0 -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE -fsanitize=address #-DLUAI_ASSERT -DLUA_USE_APICHECK
+    MYLDFLAGS= $(LOCAL) -Wl,-E
+    MYLIBS= -ldl -lreadline -fsanitize=address
 
 
-  CC= gcc
-  CFLAGS= -Wall $(MYCFLAGS) -fno-stack-protector -fno-common -march=native
-  AR= ar rc
-  RANLIB= ranlib
-  RM= rm -f
-  # skipped
-  ```
+    CC= gcc
+    CFLAGS= -Wall $(MYCFLAGS) -fno-stack-protector -fno-common -march=native
+    AR= ar rc
+    RANLIB= ranlib
+    RM= rm -f
+    # skipped
+    ```
 
 
