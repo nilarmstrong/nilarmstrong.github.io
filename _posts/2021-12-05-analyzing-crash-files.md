@@ -25,6 +25,7 @@ From the implemented fuzzer, thousands of crash files were generated. Since we a
   - GDB debugging with source code
     If you want to debug with source code, you need to add `-g -O0` options to the makefile.
 
+  - `A makefile with nothing applied`
   ```make
   # skipped
   # enable Linux goodies
@@ -41,6 +42,7 @@ From the implemented fuzzer, thousands of crash files were generated. Since we a
   # skipped
   ```
 
+  - `ASAN, debug wth source code applied makefile`
   ```make
   # skipped
   # enable Linux goodies
