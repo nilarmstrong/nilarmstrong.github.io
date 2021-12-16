@@ -9,7 +9,15 @@ From the implemented fuzzer, thousands of crash files were generated. Since we a
 
 
 
-# 1. Classifyng crash files
+# 1. Classifying crash files
+## 1) Comparing hash value of call stack's  PC
+
+Under the same environment, we made an assumption that if hash values of call stack's PC(from call stack #0 to call stack #4) of two crash files are same, they are overlapped.  We made script files to automate comparing process. You can refer the script files from [this link](https://github.com/JIHOI-KIM/MyLuaScript/tree/master/v2). Using this method the number of crash files was reduced from thousands to hundreds. 
+
+
+## 2) Checking crash type
+
+Hundreds of crash files are still a long way to go. There were various kinds of crash files. Crash files caused use-after-free, heap overflow, stack overflow, segmentation violation, etc. Not all crash files are related to worthwhile vulnerability. Our mentor recommended us to give precedence to crash type. We first analyzed use-after-free, segmentation violation, then heap overflow, and so on. Recently, we could find an exploitable vulnerability from use-after-free crash file. It would be helpful to first analyze suspicious crash files before trivial ones.
 
 
 
