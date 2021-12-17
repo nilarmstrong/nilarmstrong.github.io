@@ -5,16 +5,16 @@ categories:
 tags:
   - Lua
 ---
-Code auditing is literally analyzing codes to find software vulnerabilities. Lua is a open-source language, so we can audit code by inspecting C codes that consist Lua. While analyzing crash files, we often had hard time understanding some logics. Those kinds of crash were generated during garbage collection process. In order to fully grasp root cause of the crash, we audited garbage collection related codes in Lua.
+Code auditing is literally analyzing codes to find software vulnerabilities. Lua is an open-source language, so we can audit code by inspecting C codes that consist Lua. While analyzing crash files, we often had hard time understanding some logics. Those kinds of crash were generated during garbage collection process. In order to fully grasp root cause of the crash, we audited garbage collection related codes in Lua.
 
 # GC Memory
 
 GC Process is a process(full gc/ cycle) that works to clean up certain objects.
 This process has two stages
 
-1) mark object ( marking under object that is garbage)  
-2) release garbage memory ( erasing objects that are marked)  
-   problem here is that to run a cycle cost is too much therefore lua made a variable named GC debt to make cycle divided and work with many steps.  
+1) mark object (marking under object that is garbage)  
+2) release garbage memory (erasing objects that are marked)  
+   problem here is that to run a cycle cost is too much, therefore lua made a variable named GC debt to make cycle divided and work with many steps.  
 
 If debt is infinite exist step1 = cycle  
 debt not infinite step1 = cycle/size  
@@ -51,7 +51,7 @@ during sweep process when object is released process subtracts objects size valu
     ```
 
   - **functions used for**  
-    propagatemark
+    propagatemark  
     correctgraylist
 
   - **functions used in**  
@@ -120,12 +120,12 @@ during sweep process when object is released process subtracts objects size valu
 
   - **working process**  
     Function works according to GC Object's type  
-    1.LUA_VLNGSTR is Lua string long and it colors any color to black.  
+    1.LUA_VLNGSTR is Lua string long, and it colors any color to black.  
     2.LUA_VUPVAL is similar to external local variable  
         if upvalue is open color gray  
         if upvalue is closed color black  
-    3.LUA_VUSERDATA is Lua Userdata and it sets color black  
-    Also function binds LUA_VTABLE, LUA_VTHREAD,... into graylist using linkobjgclist to make it as list to check latertime.
+    3.LUA_VUSERDATA is Lua Userdata, and it sets color black  
+    Also function binds LUA_VTABLE, LUA_VTHREAD,... into graylist using linkobjgclist to make it as list to check later time.
 
   - **arguments**  
     global_State
@@ -182,9 +182,9 @@ during sweep process when object is released process subtracts objects size valu
 
     major base : memory of what is left after major collection  
     majorinc : this value can be changed but in here it is same with majorbase  
-    during major collection we say it is bad collection and pause  
-    when `gettotalbytes(g) > majorbase + (majorinc / 2)` = `gettotalbytes(g) > majorbase + (majorbase / 2)`  
-    Therefore bad collection is checking whether memory is freed enough  
+    during major collection we say it is bad collection and pause collection by checking whether memory is freed enough 
+    `gettotalbytes(g) > majorbase + (majorinc / 2)` = `gettotalbytes(g) > majorbase + (majorbase / 2)`  
+    
 
   - **arguments**  
     lua_State  
