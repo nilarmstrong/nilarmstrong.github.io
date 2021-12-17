@@ -29,9 +29,11 @@ Hundreds of crash files are still a long way to go. There were various kinds of 
 
   - AddressSanitizer
     If you want to use AddressSanitizer, you need to add `-fsanitize=address` option to the makefile.
+
   
   - GDB debugging with source code
     If you want to debug with source code, you need to add `-g -O0` options to the makefile.
+
 
   - `A makefile with nothing applied`
 
@@ -51,6 +53,8 @@ Hundreds of crash files are still a long way to go. There were various kinds of 
     # skipped
     ```
 
+
+
   - `ASAN, debug wth source code applied makefile`
   
     ```make
@@ -69,13 +73,18 @@ Hundreds of crash files are still a long way to go. There were various kinds of 
     # skipped
     ```
 
+
+
 ## Crash Minimization
 
   It is efficient to reduce the code of the crash to analyze the root cause of the crash. Below is an example of actually reducing the crashes from the project's fuzzer.
 
   - git commit hash : [ad3942adba574c9d008c99ce2785a5af19d146bf](https://github.com/lua/lua/commit/ad3942adba574c9d008c99ce2785a5af19d146bf)
 
+
+
   `example original crash`
+
 
   ```lua
   local function c(a,b) local label = string.gsub("0123456789", 40) end
@@ -94,7 +103,10 @@ Hundreds of crash files are still a long way to go. There were various kinds of 
     return v(function() return x end)
   ```
 
+
+
   `example minimal crash`
+
 
   ```lua
   local function v(a, b, c, ...)
@@ -111,7 +123,10 @@ Hundreds of crash files are still a long way to go. There were various kinds of 
   ```
 
 
+
+
 ## ByteCode
+
 
   Due to the characteristics of the lua interpreter, the parsed code is converted into bytecode and executed. Therefore, in order to analyze the root cause of a minimized crash, it is necessary to know which bytecode the crash code is converted to. So, we analyzed the crash by referring to the [luac.nl](https://www.luac.nl/) web page that converts lua code into bytecode.
 
