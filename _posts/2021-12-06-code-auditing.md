@@ -50,21 +50,21 @@ during sweep process when object is released process subtracts objects size valu
     }
     ```
 
-  - **functions used for**
+  - **functions used for**  
     propagatemark
     correctgraylist
 
-  - **functions used in**
+  - **functions used in**  
     lua_assert
 
-  - **working process**
+  - **working process**  
     function that returns gclist according to Object *o type and types are  
     LUA_VTABLE=Table, LUA_VLCL=Lua closure, LUA_VCCL=C closure, Thread, Proto, UserData
 
   - **arguments**
     GCObject 
 
-  - **return value information**
+  - **return value information**  
     return gclist which is list of garbage collect list
 
     
@@ -109,16 +109,16 @@ during sweep process when object is released process subtracts objects size valu
     }
     ```
 
-  - **functions used for**
+  - **functions used for**  
     luaC_barrier_  
     traverseephemeron  
     markold  
     markvalue  
 
-  - **functions used in**
+  - **functions used in**  
     lua_assert
 
-  - **working process**
+  - **working process**  
     Function works according to GC Object's type  
     1.LUA_VLNGSTR is Lua string long and it colors any color to black.  
     2.LUA_VUPVAL is similar to external local variable  
@@ -127,7 +127,7 @@ during sweep process when object is released process subtracts objects size valu
     3.LUA_VUSERDATA is Lua Userdata and it sets color black  
     Also function binds LUA_VTABLE, LUA_VTHREAD,... into graylist using linkobjgclist to make it as list to check latertime.
 
-  - **arguments**
+  - **arguments**  
     global_State
     GCObject
 
@@ -164,10 +164,10 @@ during sweep process when object is released process subtracts objects size valu
     }
     ```
 
-  - **functions used for**
+  - **functions used for**  
     luaC_step
 
-  - **functions used in**
+  - **functions used in**  
     stepgenfull  
     fullgen  
     setminordebt  
@@ -175,7 +175,7 @@ during sweep process when object is released process subtracts objects size valu
     youngcollection  
     setminordebt  
 
-  - **working process**
+  - **working process**  
     Run generational step in garbage collect
     which means running minor collection(traverses only objects recently created)  
 
@@ -186,11 +186,11 @@ during sweep process when object is released process subtracts objects size valu
     when `gettotalbytes(g) > majorbase + (majorinc / 2)` = `gettotalbytes(g) > majorbase + (majorbase / 2)`  
     Therefore bad collection is checking whether memory is freed enough  
 
-  - **arguments**
+  - **arguments**  
     lua_State  
     global_State
 
-  - **comment**
+  - **comment**  
     functions that are connected with gc generation step are  
     stepgenfull (full step)  
     fullgen (major collection)  
@@ -212,20 +212,20 @@ during sweep process when object is released process subtracts objects size valu
     }
     ```
 
-  - **functions used for**
+  - **functions used for**  
     traverseephemeron  
     traversestrongtable  
     traverseudata  
 
-  - **functions used in**
+  - **functions used in**  
     linkobjgclist
 
-  - **working process**
+  - **working process**  
     check if object should be kept in grayagain list  
     if "o" is G_TOUCHED1(old object touched this cycle) it goes into grayagain  
     if "o" is G_TOUCHED2(old object touched in previous cycle) it is changed into G_OLD(really old object (not to be visited))  
 
-  - **arguments**
+  - **arguments**  
     global_State
     GCObject
 
@@ -247,22 +247,22 @@ during sweep process when object is released process subtracts objects size valu
     }
     ```
 
-  - **functions used for**
+  - **functions used for**  
     luaF_newLclosure (lfunc.c)
 
-  - **functions used in**
+  - **functions used in**  
     luaM_newobject
 
-  - **working process**
+  - **working process**  
     get new object by luaM_newobject and type cast into GCObject * aslo as object is new set it as white color  
     g→allgc = o means that this object is allowed for collecting
 
-  - **arguments**
+  - **arguments**  
     lua_State *L : lua state   
     int tt : new object's typetag value  
     size_t sz : size to be allocated  
 
-  - **return value information**
+  - **return value information**  
     GCObject * : returns address of gc object
 
       
@@ -288,11 +288,11 @@ during sweep process when object is released process subtracts objects size valu
     }
     ```
 
-  - **functions used for**
+  - **functions used for**  
     propagateall (lgc.c)  
     singlestep (lgc.c)  
 
-  - **functions used in**
+  - **functions used in**  
     traversetable  
     traverseudata  
     traverseLclosure  
@@ -300,16 +300,16 @@ during sweep process when object is released process subtracts objects size valu
     traverseproto  
     traversethread  
 
-  - **working process**
+  - **working process**  
     all objects referenced by object  
     all starting from the object  
 
     propagatemark works until it founds all objects for two cases above and change gray objects into black
 
-  - **arguments**
+  - **arguments**  
     global_State 
 
-  - **return value information**
+  - **return value information**  
     returns return of traverse function
 
     
@@ -334,19 +334,19 @@ during sweep process when object is released process subtracts objects size valu
     }
     ```
 
-  - **functions used for**
+  - **functions used for**  
     luaC_changemode  
     fullgen  
     stepgenfull  
 
-  - **functions used in**
-    whitelist
+  - **functions used in**  
+    whitelist 
 
-  - **working process**
+  - **working process**  
     enter incremental mode and turn all objects white  
     allgc : list of all collectable objects  
     finobj : list of collectable objects with finalizers  
     tobefnz : list of userdata to be GC  
 
-  - **arguments**
+  - **arguments**  
     global_State 
