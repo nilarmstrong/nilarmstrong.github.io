@@ -57,13 +57,13 @@ Although not always detected, if coverage-guided fuzzer is being used, Token lev
 
 First, the seed to enter input is as follows. It is a simple function.
 
-![image-center]({{ '/images/fuzzing-lua-interpreter/code_ex.png' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/fuzzing-lua-interpreter/code_ex.png' | absolute_url }}){: .align-center width="60%" height="40%"}
 ###### _Figure. 4_
 
 ##### 1. Rewrite
     
 Change the name of all variables. (var1, var2... / The same goes for numbers)
-![image-center]({{ '/images/fuzzing-lua-interpreter/code_ex_2.png' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/fuzzing-lua-interpreter/code_ex_2.png' | absolute_url }}){: .align-center width="60%" height="40%"}
 
 ###### _Figure. 5_
 
