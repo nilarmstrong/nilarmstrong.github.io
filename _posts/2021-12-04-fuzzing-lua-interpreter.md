@@ -13,7 +13,7 @@ Nowadays, as application programs have lots of feature, it is not easy to find v
 It's a basic mutation technique of fuzzing and is a technique of applying mutation to each byte as an input value.
 If there is an input value of syntax as shown in Figure 1, as a result, 1 byte of mutation may be applied.
 
-![image-center]({{ '/images/fuzzing-lua-interpreter/bytecode_ex.png' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/fuzzing-lua-interpreter/bytecode_ex.png' | absolute_url }}){: .align-center width="50%" height="30%"}
 ###### _Figure. 1_
 
 However, if mutated in this way, non-printable data may be included because the byte range values (0x00~0xff) are random, and as a result, there is a high probability that an invalid syntax will be generated, so running it on an interpreter will be treated as a syntax error. therefore, it is so hard to apply mutation technique in interperter fuzzing.
@@ -29,7 +29,7 @@ Grammar-based fuzzing is a common technique for fuzzing interpreter languages. T
 
 In fact, there was an example of triggering out-of-bound write through a semantic error in Chromium Issue.
 
-![image-center]({{ '/images/fuzzing-lua-interpreter/js_ex.png' | absolute_url }}){: .align-center}
+![image-center]({{ '/images/fuzzing-lua-interpreter/js_ex.png' | absolute_url }}){: .align-center width="50%" height="30%"}
 ###### _Figure. 2_
 
 **In conclusion, grammar-based fuzzing is a good technique for fuzzing the interpreter language. However, there are things that are missed because they cannot escape from the form grammar. (still missing part of the stack)**
