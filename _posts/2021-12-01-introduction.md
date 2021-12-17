@@ -11,4 +11,11 @@ Hi, we are students from Korea, and are interested in cybersecurity. We belong t
 
 During the process of doing BoB, we organized a team - 'nilarmstrong' to make a security research on Lua. Some of you might not heard about Lua. Lua is a lightweight programming language that is mostly utilized on host programs in embedded form. As the language is not quite popular, there wasn't much information on how to make a research, such as useful methods on finding vulnerabilities, fuzzing, etc.
 
-In this blog, we posted our experience with Lua researching. For some of you who is interested with security aspect of Lua, it would be helpful to refer our posts.
+In this blog, we posted our experience with Lua researching. For some of you who is interested with security aspect of Lua, it would be helpful to refer our posts. Please feel free to contact us!
+
+- Jihoi Kim(pascal4847@gmail.com) : project Manager
+- Minseok Kang(maple19out@gmail.com) : vulnerability analysis
+- Woosun Kang(kws981924@gmail.com) : vulnerability analysis
+- Hyungchan Kim(khc9804@naver.com ) : vulnerability analysis
+- Minjoong Kim(alswnd4123@outlook.kr) : fuzzer implementation
+- Sunghun Oh(ben4109@naver.com) : fuzzer implementation
