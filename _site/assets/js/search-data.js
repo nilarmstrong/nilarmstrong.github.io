@@ -175,14 +175,19 @@ var store = [{
         "url": "http://localhost:4000/uncategorized/code-auditing/"
       },{
         "title": "7. Vulnerability Analysis",
-        "excerpt":"With tools and knowledge prepared, we had excavated several vulnerabilities in Lua. In this post, you can figure out discussions we had made in Lua-l. As Lua is open-source language, you can see lots of people giving their opinions about our analysis. Lua 5.4.4 Sandbox Escaping &amp; Type confusion caused...","categories": ["Uncategorized"],
+        "excerpt":"With tools and knowledge prepared, we had excavated several vulnerabilities in Lua. In this post, you can figure out discussions we had made in Lua-l. As Lua is open-source language, you can see lots of people giving their opinions about our analysis. lua-l report vunlnerability 1) Lua 5.4.4 Sandbox Escaping...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/vulnerability-analysis/"
       },{
         "title": "8. Applying to Host Programs",
-        "excerpt":"","categories": ["Uncategorized"],
+        "excerpt":"We selected ten widely-used host programs that use Lua script for plugins. Although we cannot show names of the host programs chosen, we basically used similar methods to apply our vulnerabilities. 1. How to mod Lua Modding means applying script file to host program. Every host program has there own...","categories": ["Uncategorized"],
         "tags": ["Lua"],
         "url": "http://localhost:4000/uncategorized/applying-to-host-programs/"
+      },{
+        "title": "8. 0-day exploitable vulnerability in Lua interpreter",
+        "excerpt":"","categories": ["Uncategorized"],
+        "tags": ["Lua"],
+        "url": "http://localhost:4000/uncategorized/zero-day-exploit/"
       },{
         "title": "9. How to Report",
         "excerpt":"If you find a new vulnerability from Lua, you can report it, but how? This post would be helpful to those who are trying to report Lua vulnerabilities. Lua-l Although there is Lua github, it hasn’t opened pull request. You can use Lua-l instead. Lua-l is an active and friendly...","categories": ["Uncategorized"],

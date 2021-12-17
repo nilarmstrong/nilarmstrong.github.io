@@ -21,8 +21,8 @@
 <meta property="og:title" content="Applying to Host Programs" />
 <meta name="author" content="Team nilarmstrong<br>(BoB 10th)" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Tips for finding vulnerabilites in Lua Programming Language" />
-<meta property="og:description" content="Tips for finding vulnerabilites in Lua Programming Language" />
+<meta name="description" content="We selected ten widely-used host programs that use Lua script for plugins. Although we cannot show names of the host programs chosen, we basically used similar methods to apply our vulnerabilities." />
+<meta property="og:description" content="We selected ten widely-used host programs that use Lua script for plugins. Although we cannot show names of the host programs chosen, we basically used similar methods to apply our vulnerabilities." />
 <link rel="canonical" href="http://localhost:4000/uncategorized/applying-to-host-programs/" />
 <meta property="og:url" content="http://localhost:4000/uncategorized/applying-to-host-programs/" />
 <meta property="og:site_name" content="Defeating Lua" />
@@ -32,7 +32,7 @@
 <meta property="twitter:title" content="Applying to Host Programs" />
 <meta name="google-site-verification" content="UQj93ERU9zgECodaaXgVpkjrFn9UrDMEzVamacSoQ8Y" />
 <script type="application/ld+json">
-{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/images/so-simple-site-logo.png"},"name":"Team nilarmstrong<br>(BoB 10th)"},"headline":"Applying to Host Programs","dateModified":"2021-12-08T00:00:00+09:00","datePublished":"2021-12-08T00:00:00+09:00","@type":"BlogPosting","author":{"@type":"Person","name":"Team nilarmstrong<br>(BoB 10th)"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/uncategorized/applying-to-host-programs/"},"description":"Tips for finding vulnerabilites in Lua Programming Language","url":"http://localhost:4000/uncategorized/applying-to-host-programs/","@context":"https://schema.org"}</script>
+{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/images/so-simple-site-logo.png"},"name":"Team nilarmstrong<br>(BoB 10th)"},"headline":"Applying to Host Programs","dateModified":"2021-12-08T00:00:00+09:00","datePublished":"2021-12-08T00:00:00+09:00","@type":"BlogPosting","author":{"@type":"Person","name":"Team nilarmstrong<br>(BoB 10th)"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/uncategorized/applying-to-host-programs/"},"description":"We selected ten widely-used host programs that use Lua script for plugins. Although we cannot show names of the host programs chosen, we basically used similar methods to apply our vulnerabilities.","url":"http://localhost:4000/uncategorized/applying-to-host-programs/","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -118,7 +118,7 @@
             <a class="u-url" rel="me" href="https://github.com/Lua-Project"><i class="fab fa-github-square fa-lg" title="GitHub"></i></a>
           </li></ul>
 
-<span class="read-time">~1 min read</span>
+<span class="read-time">1 min read</span>
 
     <time class="page-date dt-published" datetime="2021-12-08T00:00:00+09:00"><a class="u-url" href="">December 8, 2021</a>
 </time>
@@ -142,7 +142,21 @@
 
       <div class="page-content">
         <div class="e-content">
-          
+          <p>We selected ten widely-used host programs that use Lua script for plugins. Although we cannot show names of the host programs chosen,  we basically used similar methods to apply our vulnerabilities.</p>
+
+<h1 id="1-how-to-mod-lua">1. How to mod Lua</h1>
+
+<p>Modding means applying script file to host program. Every host program has there own modding method, and you can easily find them from google, or manual of the program. Check whether your script works fine through executing code such as <code class="language-plaintext highlighter-rouge">print("test")</code>. If “test” string appears on your monitor while you execute your host program, it means you succeded to mod Lua.</p>
+
+<h1 id="2-check-the-version-of-lua">2. Check the version of Lua</h1>
+
+<p>Although the newest version of Lua is v5.4.4, host programs use various kinds of Lua. Some of our target programs used 5.2. As there are some differences on each version of Lua, you need to get the version of Lua of the host program. You can simply get version information from executing <code class="language-plaintext highlighter-rouge">print(_VERSION)</code> from your Lua script. If this not works, you can try static analysis to find version related strings in the host program.</p>
+
+<h1 id="3-analyze-differences-from-original-lua">3. Analyze differences from original Lua</h1>
+
+<p>Probably, this would be the trickiest job. Host programs usually modify original Lua codes and build their own Lua interpreter. Some dangerous functions are excluded before compilation. Furthermore, there are execution differences between host programs and sole Lua interpreter. Most host programs are executed in Windows operating system. All of the Objects made in Lua use heap area. This implies you need to consider which heap allocator is used in your operating system.</p>
+
+<p>We considered conditions above in order to apply our vulnerabilities to the host programs. As a result, we found out that six host programs had security problems, and reported these issues to each vendor of the programs.</p>
 
         </div>
 
@@ -175,11 +189,11 @@
   
 
   
-    <a class="page-next" href="/uncategorized/how-to-report/">
+    <a class="page-next" href="/uncategorized/zero-day-exploit/">
       <h4 class="page-pagination-label">Next</h4>
       <span class="page-pagination-title">
         
-  How to Report
+  0-day exploitable vulnerability in Lua interpreter
 
  <i class="fas fa-arrow-right"></i>
       </span>

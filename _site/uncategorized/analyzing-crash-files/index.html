@@ -118,7 +118,7 @@
             <a class="u-url" rel="me" href="https://github.com/Lua-Project"><i class="fab fa-github-square fa-lg" title="GitHub"></i></a>
           </li></ul>
 
-<span class="read-time">1 min read</span>
+<span class="read-time">3 min read</span>
 
     <time class="page-date dt-published" datetime="2021-12-05T00:00:00+09:00"><a class="u-url" href="">December 5, 2021</a>
 </time>
@@ -144,14 +144,14 @@
         <div class="e-content">
           <p>From the implemented fuzzer, thousands of crash files were generated. Since we are just a small team and we had limited time for this project, we needed some strategy to classify our crash files. Also, as crash files were .lua script files, we spent much time on analyzing root cause of crash files. We believe this post would be helpful to those who are trying to analyze lua script that causes crash on Lua interprerter.</p>
 
-<h1 id="1-classifyng-crash-files">1. Classifyng crash files</h1>
+<h1 id="1-classifying-crash-files">1. Classifying crash files</h1>
 <h2 id="1-comparing-hash-value-of-call-stacks--pc">1) Comparing hash value of call stack’s  PC</h2>
 
 <p>Under the same environment, we made an assumption that if hash values of call stack’s PC(from call stack #0 to call stack #4) of two crash files are same, they are overlapped.  We made script files to automate comparing process. You can refer the script files from <a href="https://github.com/JIHOI-KIM/MyLuaScript/tree/master/v2">this link</a>. Using this method the number of crash files was reduced from thousands to hundreds.</p>
 
 <h2 id="2-checking-crash-type">2) Checking crash type</h2>
 
-<p>Hundreds of crash files are still a long way to go. There were various kinds of crash files. Crash files caused use-after-free, heap overflow, stack overflow, segmentation violation, etc. Not all crash files are related to worthwhile vulnerability. Our mentor recommended us to give precedence to crash type. We first analyzed use-after-free, segmentation violation, then heap overflow, and so on. Recently, we could find an exploitable vulnerability from use-after-free crash file. It would be helpful to first analyze suspicious crash files before trivial ones.</p>
+<p>Hundreds of crash files are still a long way to go. There were various kinds of crash files. Crash files caused use-after-free, heap overflow, stack overflow, segmentation violation, etc. Not qqqqqqqqqqall crash files are related to worthwhile vulnerability. Our mentor recommended us to give precedence to crash type. We first analyzed use-after-free, segmentation violation, then heap overflow, and so on. Recently, we could find an exploitable vulnerability from use-after-free crash file. It would be helpful to first analyze suspicious crash files before trivial ones.</p>
 
 <h1 id="2-tips-for-analyzing-the-crash">2. Tips for analyzing the crash</h1>
 
@@ -168,36 +168,111 @@ If you want to debug with source code, you need to add <code class="language-pla
   </li>
 </ul>
 
-<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c"># skipped
-</span>  <span class="c"># enable Linux goodies
-</span>  <span class="nv">MYCFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-std</span><span class="o">=</span>c99 <span class="nt">-DLUA_USE_LINUX</span> <span class="nt">-DLUA_USE_READLINE</span>
-  <span class="nv">MYLDFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-Wl</span>,-E
-  <span class="nv">MYLIBS</span><span class="o">=</span> <span class="nt">-ldl</span> <span class="nt">-lreadline</span>
+<p><br /></p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">A makefile with nothing applied</code></p>
+
+    <div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># skipped
+# enable Linux goodies
+</span><span class="nv">MYCFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-std</span><span class="o">=</span>c99 <span class="nt">-DLUA_USE_LINUX</span> <span class="nt">-DLUA_USE_READLINE</span>
+<span class="nv">MYLDFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-Wl</span>,-E
+<span class="nv">MYLIBS</span><span class="o">=</span> <span class="nt">-ldl</span> <span class="nt">-lreadline</span>
 
 
-  <span class="nv">CC</span><span class="o">=</span> gcc
-  <span class="nv">CFLAGS</span><span class="o">=</span> <span class="nt">-Wall</span> <span class="nt">-O2</span> <span class="nv">$(MYCFLAGS)</span> <span class="nt">-fno-stack-protector</span> <span class="nt">-fno-common</span> <span class="nt">-march</span><span class="o">=</span>native
-  <span class="nv">AR</span><span class="o">=</span> ar rc
-  <span class="nv">RANLIB</span><span class="o">=</span> ranlib
-  <span class="nv">RM</span><span class="o">=</span> <span class="nb">rm</span> <span class="nt">-f</span>
-  <span class="c"># skipped
-</span></code></pre></div></div>
+<span class="nv">CC</span><span class="o">=</span> gcc
+<span class="nv">CFLAGS</span><span class="o">=</span> <span class="nt">-Wall</span> <span class="nt">-O2</span> <span class="nv">$(MYCFLAGS)</span> <span class="nt">-fno-stack-protector</span> <span class="nt">-fno-common</span> <span class="nt">-march</span><span class="o">=</span>native
+<span class="nv">AR</span><span class="o">=</span> ar rc
+<span class="nv">RANLIB</span><span class="o">=</span> ranlib
+<span class="nv">RM</span><span class="o">=</span> <span class="nb">rm</span> <span class="nt">-f</span>
+<span class="c"># skipped
+</span></code></pre></div>    </div>
+  </li>
+</ul>
 
-<div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c"># skipped
-</span>  <span class="c"># enable Linux goodies
-</span>  <span class="nv">MYCFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-g</span> <span class="nt">-O0</span> <span class="nt">-std</span><span class="o">=</span>c99 <span class="nt">-DLUA_USE_LINUX</span> <span class="nt">-DLUA_USE_READLINE</span> <span class="nt">-fsanitize</span><span class="o">=</span>address <span class="c">#-DLUAI_ASSERT -DLUA_USE_APICHECK</span>
-  <span class="nv">MYLDFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-Wl</span>,-E
-  <span class="nv">MYLIBS</span><span class="o">=</span> <span class="nt">-ldl</span> <span class="nt">-lreadline</span> <span class="nt">-fsanitize</span><span class="o">=</span>address
+<p><br /><br /></p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ASAN, debug wth source code applied makefile</code></p>
+
+    <div class="language-make highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># skipped
+# enable Linux goodies
+</span><span class="nv">MYCFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-g</span> <span class="nt">-O0</span> <span class="nt">-std</span><span class="o">=</span>c99 <span class="nt">-DLUA_USE_LINUX</span> <span class="nt">-DLUA_USE_READLINE</span> <span class="nt">-fsanitize</span><span class="o">=</span>address <span class="c">#-DLUAI_ASSERT -DLUA_USE_APICHECK</span>
+<span class="nv">MYLDFLAGS</span><span class="o">=</span> <span class="nv">$(LOCAL)</span> <span class="nt">-Wl</span>,-E
+<span class="nv">MYLIBS</span><span class="o">=</span> <span class="nt">-ldl</span> <span class="nt">-lreadline</span> <span class="nt">-fsanitize</span><span class="o">=</span>address
 
 
-  <span class="nv">CC</span><span class="o">=</span> gcc
-  <span class="nv">CFLAGS</span><span class="o">=</span> <span class="nt">-Wall</span> <span class="nv">$(MYCFLAGS)</span> <span class="nt">-fno-stack-protector</span> <span class="nt">-fno-common</span> <span class="nt">-march</span><span class="o">=</span>native
-  <span class="nv">AR</span><span class="o">=</span> ar rc
-  <span class="nv">RANLIB</span><span class="o">=</span> ranlib
-  <span class="nv">RM</span><span class="o">=</span> <span class="nb">rm</span> <span class="nt">-f</span>
-  <span class="c"># skipped
-</span></code></pre></div></div>
+<span class="nv">CC</span><span class="o">=</span> gcc
+<span class="nv">CFLAGS</span><span class="o">=</span> <span class="nt">-Wall</span> <span class="nv">$(MYCFLAGS)</span> <span class="nt">-fno-stack-protector</span> <span class="nt">-fno-common</span> <span class="nt">-march</span><span class="o">=</span>native
+<span class="nv">AR</span><span class="o">=</span> ar rc
+<span class="nv">RANLIB</span><span class="o">=</span> ranlib
+<span class="nv">RM</span><span class="o">=</span> <span class="nb">rm</span> <span class="nt">-f</span>
+<span class="c"># skipped
+</span></code></pre></div>    </div>
+  </li>
+</ul>
 
+<p><br /><br /></p>
+
+<h2 id="crash-minimization">Crash Minimization</h2>
+
+<p>It is efficient to reduce the code of the crash to analyze the root cause of the crash. Below is an example of actually reducing the crashes from the project’s fuzzer.</p>
+
+<ul>
+  <li>git commit hash : <a href="https://github.com/lua/lua/commit/ad3942adba574c9d008c99ce2785a5af19d146bf">ad3942adba574c9d008c99ce2785a5af19d146bf</a></li>
+</ul>
+
+<p><br /><br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">example original crash</code></p>
+
+<p><br /></p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="k">function</span> <span class="nf">c</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="kd">local</span> <span class="n">label</span> <span class="o">=</span> <span class="nb">string.gsub</span><span class="p">(</span><span class="s2">"0123456789"</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span> <span class="k">end</span>
+    <span class="kd">local</span> <span class="k">function</span> <span class="nf">v</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="nb">string.packsize</span><span class="s2">"XXxX"</span> <span class="k">end</span>
+    <span class="nb">setmetatable</span><span class="p">({},</span> <span class="p">{</span><span class="n">__gc</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span> <span class="nb">string.packsize</span><span class="p">(</span><span class="nb">type</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"^([^\n]+)\n"</span><span class="p">)</span> <span class="k">end</span><span class="p">})</span>
+    <span class="kd">local</span> <span class="n">b</span><span class="p">,</span><span class="n">c</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="k">function</span> <span class="nf">v</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="kd">local</span> <span class="k">function</span> <span class="nf">c</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="nb">os.exit</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="s2">"[^\n]"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+  <span class="k">end</span>
+    <span class="kd">local</span> <span class="k">function</span> <span class="nf">v</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="nb">os.exit</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="s2">"[^\n]"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+  <span class="k">end</span>
+    <span class="kd">local</span> <span class="n">a</span> <span class="o">&lt;</span><span class="n">close</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">setmetatable</span><span class="p">({},</span> <span class="p">{</span><span class="n">__close</span> <span class="o">=</span> <span class="n">c</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">v</span><span class="p">(</span><span class="k">function</span><span class="p">()</span> <span class="k">return</span> <span class="n">x</span> <span class="k">end</span><span class="p">)</span> <span class="k">end</span>
+    <span class="kd">local</span> <span class="n">a</span> <span class="o">&lt;</span><span class="n">close</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">setmetatable</span><span class="p">({},</span> <span class="p">{</span><span class="n">__close</span> <span class="o">=</span> <span class="n">c</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">v</span><span class="p">(</span><span class="k">function</span><span class="p">()</span> <span class="k">return</span> <span class="n">x</span> <span class="k">end</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><br /><br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">example minimal crash</code></p>
+
+<p><br /></p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">local</span> <span class="k">function</span> <span class="nf">v</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">os.exit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kd">local</span> <span class="k">function</span> <span class="nf">a</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">h</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="kd">local</span> <span class="n">e</span> <span class="o">&lt;</span><span class="n">close</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">setmetatable</span><span class="p">({},</span> <span class="p">{</span><span class="n">__close</span> <span class="o">=</span> <span class="nb">string.rep</span><span class="p">})</span>
+
+  <span class="n">v</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><br /><br /></p>
+
+<h2 id="bytecode">ByteCode</h2>
+
+<p><br />
+  Due to the characteristics of the lua interpreter, the parsed code is converted into bytecode and executed. Therefore, in order to analyze the root cause of a minimized crash, it is necessary to know which bytecode the crash code is converted to. So, we analyzed the crash by referring to the <a href="https://www.luac.nl/">luac.nl</a> web page that converts lua code into bytecode.</p>
+
+<p>The converted bytecode is operated in the <code class="language-plaintext highlighter-rouge">luaV_execute</code> function inside Lua. After checking which bytecode among the bytecodes generated by the crash code causes the crash to occur, we focused on that part to find out the root cause.</p>
 
         </div>
 
