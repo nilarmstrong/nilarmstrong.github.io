@@ -99,13 +99,13 @@ defaults:
       comments: true
       share: true
   # Recipe defaults
-  - scope:
-      path: "_demo"
-      type: demo
-    values:
-      layout: post
-      comments: true
-      share: true
+  #- scope:
+  #    path: "_demo"
+  #    type: demo
+  #  values:
+  #    layout: post
+  #    comments: true
+  #    share: true
 
 # Site Author
 author:
